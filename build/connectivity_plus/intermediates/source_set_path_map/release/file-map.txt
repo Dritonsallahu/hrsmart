@@ -1,0 +1,12 @@
+dev.fluttercommunity.plus.connectivity.connectivity_plus-jetified-window-1.0.0-beta04-0 C:\Users\drito\.gradle\caches\transforms-3\25cee5f028ac2a6b79fd6278ff5b59e2\transformed\jetified-window-1.0.0-beta04\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-jetified-annotation-experimental-1.1.0-1 C:\Users\drito\.gradle\caches\transforms-3\6c0c163cc77ae6c91f9f7dfcd179c29c\transformed\jetified-annotation-experimental-1.1.0\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-core-1.6.0-2 C:\Users\drito\.gradle\caches\transforms-3\7e9df2ac2213a6bd3cef0f2f27870d79\transformed\core-1.6.0\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-jetified-window-java-1.0.0-beta04-3 C:\Users\drito\.gradle\caches\transforms-3\ae81e06d24c799147c26814497a2a305\transformed\jetified-window-java-1.0.0-beta04\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-main-4 C:\Users\drito\AppData\Local\Pub\Cache\hosted\pub.dev\connectivity_plus-4.0.2\android\src\main\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-release-5 C:\Users\drito\AppData\Local\Pub\Cache\hosted\pub.dev\connectivity_plus-4.0.2\android\src\release\res
+dev.fluttercommunity.plus.connectivity.connectivity_plus-pngs-6 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\generated\res\pngs\release
+dev.fluttercommunity.plus.connectivity.connectivity_plus-resValues-7 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\generated\res\resValues\release
+dev.fluttercommunity.plus.connectivity.connectivity_plus-rs-8 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\generated\res\rs\release
+dev.fluttercommunity.plus.connectivity.connectivity_plus-mergeReleaseResources-9 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\intermediates\incremental\release\mergeReleaseResources\merged.dir
+dev.fluttercommunity.plus.connectivity.connectivity_plus-mergeReleaseResources-10 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+dev.fluttercommunity.plus.connectivity.connectivity_plus-merged_res-11 C:\Users\drito\StudioProjects\hrsmart\build\connectivity_plus\intermediates\merged_res\release

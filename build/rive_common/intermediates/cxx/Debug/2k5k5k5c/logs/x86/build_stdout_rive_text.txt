@@ -1,0 +1,2 @@
+ninja: Entering directory `C:\Users\drito\AppData\Local\Pub\Cache\hosted\pub.dev\rive_common-0.2.7\android\.cxx\Debug\2k5k5k5c\x86'
+ninja: no work to do.

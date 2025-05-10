@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive_text\rive_text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\math\raw_path.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\math\mat2d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\rive_counter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\text\font_hb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\rive-cpp\src\text\line_breaker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-aat-layout.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-aat-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-blob.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-buffer-serialize.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-buffer-verify.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-buffer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-common.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-draw.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-face.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-font.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-number.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-cff1-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-cff2-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-color.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-face.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-font.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-layout.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-math.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-meta.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-metrics.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-name.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-arabic.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-default.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-hangul.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-hebrew.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-indic-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-indic.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-khmer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-myanmar.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-syllabic.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-thai.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-use.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shaper-vowel-constraints.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shape-fallback.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shape-normalize.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-shape.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-tag.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ot-var.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-set.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-shape-plan.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-shape.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-shaper.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-static.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-cff-common.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-cff1.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-cff2.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-input.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-plan.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset-repacker.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-subset.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-ucd.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\hb-unicode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\harfbuzz\src\graph\gsubgpos-context.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\ios\SheenBidi\Source\SheenBidi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\windows\rive_plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral\.plugin_symlinks\rive_common\windows\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{70577C58-22C9-3803-A6BE-1C09F63F04F9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

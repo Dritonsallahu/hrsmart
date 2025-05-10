@@ -1,0 +1,28 @@
+^C:\USERS\DRITO\STUDIOPROJECTS\HRSMART\BUILD\WINDOWS\CMAKEFILES\EB14D2D5A4F7AA7A215A8AFA3F63EE74\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\flutter\flutter PROJECT_DIR=C:\Users\drito\StudioProjects\hrsmart FLUTTER_ROOT=D:\flutter\flutter FLUTTER_EPHEMERAL_DIR=C:\Users\drito\StudioProjects\hrsmart\windows\flutter\ephemeral PROJECT_DIR=C:\Users\drito\StudioProjects\hrsmart FLUTTER_TARGET=lib\main.dart DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=true PACKAGE_CONFIG=C:\Users\drito\StudioProjects\hrsmart\.dart_tool\package_config.json D:/flutter/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Release
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\DRITO\STUDIOPROJECTS\HRSMART\BUILD\WINDOWS\CMAKEFILES\9CED3160540DEC48DBD622367481B1BE\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\DRITO\STUDIOPROJECTS\HRSMART\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/drito/StudioProjects/hrsmart/windows -BC:/Users/drito/StudioProjects/hrsmart/build/windows --check-stamp-file C:/Users/drito/StudioProjects/hrsmart/build/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

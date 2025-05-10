@@ -1,0 +1,4 @@
+#Thu Oct 12 11:56:13 CEST 2023
+base.0=C\:\\Users\\drito\\StudioProjects\\hrsmart\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
