@@ -34,9 +34,11 @@ class UnauthorizedFailure extends Failure {
 }
 
 class EmptyDataFailure extends Failure {
+  String? message;
+  EmptyDataFailure({this.message});
   @override
   // TODO: implement props
-  List<Object?> get props => ['Nuk ka asnje te dhene!'];
+  List<Object?> get props => [message ?? 'Nuk ka asnje te dhene!'];
 }
 
 class UnfilledDataFailure extends Failure {

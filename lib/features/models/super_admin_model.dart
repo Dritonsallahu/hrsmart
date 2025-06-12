@@ -1,5 +1,5 @@
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/models/user_model.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/models/user_model.dart';
 
 class SuperAdminModel extends UserModel {
   dynamic id;

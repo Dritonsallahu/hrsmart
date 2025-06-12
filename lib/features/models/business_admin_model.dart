@@ -1,7 +1,7 @@
 // ignore_for_file: overridden_fields
 
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/models/user_model.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/models/user_model.dart';
 
 class BusinessAdminModel extends UserModel {
   dynamic id;

@@ -1,7 +1,7 @@
 
-import 'package:hr_smart/features/presentation/screens/super_admin/businesses_list_screen.dart';
-import 'package:hr_smart/features/presentation/screens/super_admin/new_business_screen.dart';
-import 'package:hr_smart/features/presentation/screens/super_admin/super_admin_home.dart';
+import 'package:business_menagament/features/presentation/screens/super_admin/businesses_list_screen.dart';
+import 'package:business_menagament/features/presentation/screens/super_admin/new_business_screen.dart';
+import 'package:business_menagament/features/presentation/screens/super_admin/super_admin_home.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 

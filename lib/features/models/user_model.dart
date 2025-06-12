@@ -1,6 +1,6 @@
-import 'package:hr_smart/features/models/business_admin_model.dart';
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/business_admin_model.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
 
 class UserModel {
   dynamic id;
@@ -28,8 +28,6 @@ class UserModel {
       });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    print("---");
-    print(json['employee']);
     return UserModel(
       id: json['_id'],
       fullName: json['fullName'],

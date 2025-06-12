@@ -1,10 +1,10 @@
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/core/storage/local_storage.dart';
-import 'package:hr_smart/features/controllers/employee_controllers/emp_expenses_controller.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/screens/credentials_screen.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/features/controllers/employee_controllers/emp_expenses_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/screens/credentials_screen.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 
 class EmployeeProvider extends ChangeNotifier {

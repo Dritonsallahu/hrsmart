@@ -1,5 +1,5 @@
-// import 'package:hr_smart/model/user.dart';
-// import 'package:hr_smart/userPreferences/user_preferences.dart';
+// import 'package:business_menagament/model/user.dart';
+// import 'package:business_menagament/userPreferences/user_preferences.dart';
 // import 'package:get/get.dart';
 //
 // class CurrentIndex extends GetxController{

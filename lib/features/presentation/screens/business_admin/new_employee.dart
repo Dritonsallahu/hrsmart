@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_admin_controller.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NewEmployee extends StatefulWidget {
   final bool? newPage;
@@ -31,64 +31,67 @@ class _NewEmployeeState extends State<NewEmployee> {
   final TextEditingController _startedDate = TextEditingController();
   bool isManager = false;
   bool registering = false;
+  bool withSalary = false;
 
   addNewEmployee(context) async {
     setState(() => registering = true);
     var user = Provider.of<CurrentUser>(context, listen: false).getUser()!;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-      EmployeeModel employeeModel = EmployeeModel(
-          business: user.businessModel!.id,
-          allowedDebt: _allowedDebt.text,
-          salary: _salary.text,type: isManager ? "manager" : "waiter",
-          startedDate: _startedDate.text,
-          status: "active");
+    EmployeeModel employeeModel = EmployeeModel(
+        business: user.businessModel!.id,
+        allowedDebt: _allowedDebt.text,
+        salary: _salary.text,
+        withinSalary: withSalary,
+        type: isManager ? "manager" : "waiter",
+        startedDate: _startedDate.text,
+        status: "active");
 
-      var data = employeeModel.toJson();
-      data['fullName'] = _fullName.text;
-      data['username'] = _username.text;
-      data['email'] = _email.text;
-      data['password'] = _password.text;
-      data['active'] = true;
-      BusinessAdminController businessAdminController =
-          BusinessAdminController();
-      var result = await businessAdminController.addNewEmployee(jsonEncode(data),);
-      result.fold((failure) {
-        showErroModal(failureResponse(failure));
-      }, (r) {
-        setState(() {
-          _fullName.text = "";
-          _username.text = "";
-          _email.text = "";
-          _password.text = "";
-          _salary.text = "";
-          _allowedDebt.text = "";
-        });
-        showErroModal("Te dhenat u shtuan me sukses");
-        setState(() => registering = false);
+    var data = employeeModel.toJson();
+    data['fullName'] = _fullName.text;
+    data['username'] = _username.text;
+    data['email'] = _email.text;
+    data['password'] = _password.text;
+    data['active'] = true;
+    var provider = Provider.of<BusinessProvider>(context, listen: false);
+    var result = await provider.addNewEmployee(
+      context,
+      jsonEncode(data),
+    );
+    if (result == "success") {
+      setState(() {
+        _fullName.text = "";
+        _username.text = "";
+        _email.text = "";
+        _password.text = "";
+        _salary.text = "";
+        _allowedDebt.text = "";
       });
-
-
+    }
+    setState(() => registering = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKe,
-      appBar: !widget.newPage! ? null:AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Text(
-          "Punetor i ri",
-          style: GoogleFonts.poppins(fontSize: 17),
-        ),
-        centerTitle: true,
-      ),
+      appBar: !widget.newPage!
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              title: Text(
+                "Punetor i ri",
+                style: GoogleFonts.poppins(fontSize: 17),
+              ),
+              centerTitle: true,
+            ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ListView(
           physics: const ClampingScrollPhysics(),
           children: [
-             SizedBox(height: !widget.newPage! ? 20:0,),
+            SizedBox(
+              height: !widget.newPage! ? 20 : 0,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -279,6 +282,7 @@ class _NewEmployeeState extends State<NewEmployee> {
               width: MediaQuery.of(context).size.width - 40,
               height: 49,
               child: TextFormField(
+                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Minusi duhet te plotesohet";
@@ -293,7 +297,112 @@ class _NewEmployeeState extends State<NewEmployee> {
                       border: OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
-              height: 10,
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Minusi',
+                    style: GoogleFonts.nunito(
+                        fontSize: 15.5, fontWeight: FontWeight.w700),
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            withSalary = true;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                        color:
+                                            const Color.fromRGBO(50, 74, 89, 1),
+                                        width: 1.6)),
+                                padding: const EdgeInsets.all(2),
+                                child: !withSalary
+                                    ? const SizedBox()
+                                    : Container(
+                                        width: 25,
+                                        height: 25,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          color: const Color.fromRGBO(
+                                              50, 74, 89, 1),
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text('Brenda rroges')
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            withSalary = false;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                        color:
+                                            const Color.fromRGBO(50, 74, 89, 1),
+                                        width: 1.6)),
+                                padding: const EdgeInsets.all(2),
+                                child: withSalary
+                                    ? const SizedBox()
+                                    : Container(
+                                        width: 25,
+                                        height: 25,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          color: const Color.fromRGBO(
+                                              50, 74, 89, 1),
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Text('Jasht rroges')
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 15,
             ),
             SizedBox(
                 height: 49,
@@ -331,46 +440,56 @@ class _NewEmployeeState extends State<NewEmployee> {
                         lastDate: DateTime(2101));
 
                     if (pickedDate != null) {
-                      print(
-                          pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                       String formattedDate =
                           DateFormat('yyyy-MM-dd').format(pickedDate);
-                      print(
-                          formattedDate); //formatted date output using intl package =>  2021-03-16
                       //you can implement different kind of Date Format here according to your requirement
 
                       setState(() {
                         _startedDate.text =
                             formattedDate; //set output date to TextField value.
                       });
-                    } else {
-                      print("Date is not selected");
-                    }
+                    } else {}
                   },
                 )),
             const SizedBox(
               height: 10,
             ),
             SizedBox(
-                height: 49,
-                width: MediaQuery.of(context).size.width - 40,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if(!registering){
+              height: 49,
+              width: MediaQuery.of(context).size.width - 40,
+              child: GestureDetector(
+                  onTap: () {
+                    if (!registering) {
                       addNewEmployee(context);
                     }
                   },
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          const Color.fromRGBO(50, 74, 89, 1)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4)))),
-                  child: registering ? const CircularProgressIndicator(strokeWidth: 1.6,color: Colors.white,):const Text(
-                    "Add",
-                    style: TextStyle(color: Colors.white, fontSize: 17),
-                  ),
-                )),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: const LinearGradient(
+                              colors: [
+                                Color(0xff3f617e),
+                                Color(0xff324a60),
+                                Color(0xff1a2836),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [0.2, 0.5, 1])),
+                      child: registering
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.6,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Center(
+                              child: Text(
+                                "Shto puntorin",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 17),
+                              ),
+                            ))),
+            )
           ],
         ),
       ),
@@ -424,30 +543,40 @@ class _NewEmployeeState extends State<NewEmployee> {
     }
   }
 
-  showErroModal(String errorTitle){
-    showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context){
-      return Padding(
-        padding: const EdgeInsets.only(left: 20,right: 20,bottom: 20),
-        child: Container(
-          width: getPhoneWidth(context),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20)
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 15),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(errorTitle,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontSize: 20,color: Colors.black),),
-                const SizedBox(height: 20,),
-                TextButton(onPressed: (){
-                  Navigator.pop(context);
-                }, child: const Text("Largo"))
-              ],
+  showErroModal(String errorTitle) {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+            child: Container(
+              width: getPhoneWidth(context),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      errorTitle,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                          fontSize: 20, color: Colors.black),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Largo"))
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      );
-    });
+          );
+        });
   }
 }

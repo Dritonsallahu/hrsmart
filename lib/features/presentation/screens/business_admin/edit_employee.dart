@@ -1,19 +1,21 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_admin_controller.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:business_menagament/l10n/app_localizations.dart';
 
 class EditEmployeeScreen extends StatefulWidget {
   final EmployeeModel? employeeModel;
-  const EditEmployeeScreen({Key? key,this.employeeModel}) : super(key: key);
+  const EditEmployeeScreen({Key? key, this.employeeModel}) : super(key: key);
 
   @override
   State<EditEmployeeScreen> createState() => _EditEmployeeScreenState();
@@ -31,45 +33,63 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
   final TextEditingController _startedDate = TextEditingController();
   bool isManager = false;
   bool registering = false;
+  bool withSalary = false;
 
   editEmployee(context) async {
     setState(() => registering = true);
-    var user = Provider.of<CurrentUser>(context, listen: false).getUser()!;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
 
     EmployeeModel employeeModel = EmployeeModel(
-        business: user.businessModel!.id,
+      id: widget.employeeModel!.id,user: widget.employeeModel!.user,
+        business: widget.employeeModel!.business['_id'],
         allowedDebt: _allowedDebt.text,
-        salary: _salary.text,type: isManager ? "Manager" : "Waiter",
+        salary: _salary.text,
+        withinSalary: withSalary,
+        type: isManager ? "Manager" : "Waiter",
         startedDate: _startedDate.text,
         status: "active");
 
     var data = employeeModel.toJson();
-    data['fullName'] = _fullName.text;
-    data['username'] = _username.text;
-    data['_email'] = _email.text;
-    data['password'] = _password.text;
-    data['active'] = true;
-    showErroModal("Perditesimi nuk mund te behet!\n Ju lutem prisni deri ne njoftimin e radhes.");
-    // BusinessAdminController businessAdminController =
-    // BusinessAdminController();
-    // var result = await businessAdminController.addNewEmployee(jsonEncode(data),);
-    // result.fold((failure) {
-    //   showErroModal(failureResponse(failure));
-    // }, (r) {
-    //   setState(() {
-    //     _fullName.text = "";
-    //     _username.text = "";
-    //     _email.text = "";
-    //     _password.text = "";
-    //     _salary.text = "";
-    //     _allowedDebt.text = "";
-    //   });
-    //   showErroModal("Te dhenat u shtuan me sukses");
-    //   setState(() => registering = false); 
-    // });
-    setState(() => registering = false);
 
+    if (_fullName.text.isEmpty ||
+        _username.text.isEmpty ||
+        _email.text.isEmpty ||
+        _allowedDebt.text.isEmpty ||
+        _salary.text.isEmpty) {
+      showErroModal(context, AppLocalizations.of(context)!.completeFields);
+      setState(() => registering = false);
+      return;
+    }
+    if(_email.text != widget.employeeModel!.user!.email){
+      data['email'] = _email.text;
+    }
+    if(_fullName.text != widget.employeeModel!.user!.fullName){
+      data['fullName'] = _fullName.text;
+    }
+    if(_username.text != widget.employeeModel!.user!.username){
+      data['username'] = _username.text;
+    }
+    if(_allowedDebt.text != widget.employeeModel!.allowedDebt){
+      data['allowed_debt'] = _allowedDebt.text;
+    }
+    if(_salary.text != widget.employeeModel!.salary){
+    data['salary'] = _salary.text;
+    }
+    if(_password.text != widget.employeeModel!.salary && _password.text.isNotEmpty){
+      data['password'] = _password.text;
+    }
+    BusinessAdminController businessAdminController = BusinessAdminController();
+    var result =
+        await businessAdminController.updateEmployeeProfile(context, jsonEncode(data));
+    result.fold((failure) {
+      showFailureModal(context, failure);
+    }, (r) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Provider.of<BusinessProvider>(context,listen: false).updateEmployee(r);
+      showErroModal(context, AppLocalizations.of(context)!.successUpdate);
+      setState(() => registering = false);
+    });
+    setState(() => registering = false);
   }
 
   @override
@@ -81,15 +101,20 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
       _salary.text = widget.employeeModel!.salary!.toString();
       _allowedDebt.text = widget.employeeModel!.allowedDebt!.toString();
       _startedDate.text = widget.employeeModel!.startedDate!.toString();
-      if(widget.employeeModel!.type == "Manager"){
+      if (widget.employeeModel!.type == "Manager") {
         isManager = true;
-      }
-      else{
+      } else {
         isManager = false;
+      }
+      if (widget.employeeModel!.withinSalary == true) {
+        withSalary = true;
+      } else {
+        withSalary = false;
       }
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,18 +159,18 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                           child: isManager
                               ? const SizedBox()
                               : Container(
-                            width: 25,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color.fromRGBO(50, 74, 89, 1),
-                            ),
-                          ),
+                                  width: 25,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: const Color.fromRGBO(50, 74, 89, 1),
+                                  ),
+                                ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        const Text('Kamarier')
+                          Text(AppLocalizations.of(context)!.waiter)
                       ],
                     ),
                   ),
@@ -172,18 +197,18 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                           child: !isManager
                               ? const SizedBox()
                               : Container(
-                            width: 25,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color.fromRGBO(50, 74, 89, 1),
-                            ),
-                          ),
+                                  width: 25,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: const Color.fromRGBO(50, 74, 89, 1),
+                                  ),
+                                ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        const Text('Manager')
+                          Text(AppLocalizations.of(context)!.manager)
                       ],
                     ),
                   ),
@@ -197,18 +222,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               width: MediaQuery.of(context).size.width - 40,
               height: 49,
               child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Emri dhe mbiemri duhet te plotesohen.';
-                    }
-                    return null;
-                  },
+
                   controller: _fullName,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Emri dhe mbiemri",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText: AppLocalizations.of(context)!.fullName,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
               height: 10,
@@ -217,18 +237,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               width: MediaQuery.of(context).size.width - 40,
               height: 49,
               child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Username duhet te plotesohet.";
-                    }
-                    return null;
-                  },
+
                   controller: _username,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Username",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText:AppLocalizations.of(context)!.username,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
               height: 10,
@@ -237,18 +252,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               width: MediaQuery.of(context).size.width - 40,
               height: 49,
               child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Email duhet te plotesohet.";
-                    }
-                    return null;
-                  },
+
                   controller: _email,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Email",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText:AppLocalizations.of(context)!.email,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
               height: 10,
@@ -258,18 +268,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               height: 49,
               child: TextFormField(
                   obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password duhet te plotesohet.";
-                    }
-                    return null;
-                  },
+
                   controller: _password,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Password",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText: AppLocalizations.of(context)!.password,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
               height: 10,
@@ -279,18 +284,13 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               height: 49,
               child: TextFormField(
                   keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Paga duhet te plotesohet.";
-                    }
-                    return null;
-                  },
+
                   controller: _salary,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Paga",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText: AppLocalizations.of(context)!.salary,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
             ),
             const SizedBox(
               height: 10,
@@ -299,39 +299,127 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
               width: MediaQuery.of(context).size.width - 40,
               height: 49,
               child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Minusi duhet te plotesohet";
-                    }
-                    return null;
-                  },
+
                   controller: _allowedDebt,
-                  decoration: const InputDecoration(
-                      fillColor: Color.fromRGBO(247, 248, 251, 1),
+                  decoration:   InputDecoration(
+                      fillColor: const Color.fromRGBO(247, 248, 251, 1),
                       filled: true,
-                      hintText: "Minusi lejuar mujor",
-                      border: OutlineInputBorder(borderSide: BorderSide.none))),
+                      hintText: AppLocalizations.of(context)!.allowedMinus,
+                      border: const OutlineInputBorder(borderSide: BorderSide.none))),
+            ),
+
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.minus,
+                    style: GoogleFonts.nunito(
+                        fontSize: 15.5, fontWeight: FontWeight.w700),
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            withSalary = true;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                        color: const Color.fromRGBO(50, 74, 89, 1),
+                                        width: 1.6)),
+                                padding: const EdgeInsets.all(2),
+                                child: !withSalary
+                                    ? const SizedBox()
+                                    : Container(
+                                  width: 25,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: const Color.fromRGBO(50, 74, 89, 1),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                                Text( AppLocalizations.of(context)!.withPayment)
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10,),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            withSalary = false;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                        color: const Color.fromRGBO(50, 74, 89, 1),
+                                        width: 1.6)),
+                                padding: const EdgeInsets.all(2),
+                                child: withSalary
+                                    ? const SizedBox()
+                                    : Container(
+                                  width: 25,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    color: const Color.fromRGBO(50, 74, 89, 1),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                                Text( AppLocalizations.of(context)!.withoutPayment)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
-              height: 10,
+              height: 15 ,
             ),
             SizedBox(
                 height: 49,
                 width: MediaQuery.of(context).size.width - 40,
                 child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Plotesoni daten";
-                    }
-                    return null;
-                  },
+
                   controller:
-                  _startedDate, //editing controller of this TextField
+                      _startedDate, //editing controller of this TextField
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
                       prefixIcon: Icon(Icons.calendar_today),
                       suffixIcon:
-                      Icon(Icons.arrow_drop_down), //icon of text field
+                          Icon(Icons.arrow_drop_down), //icon of text field
 
                       hintText: "00/00/0000",
                       filled: true,
@@ -341,7 +429,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                           fontSize: 16,
                           fontWeight: FontWeight.w300)),
                   readOnly:
-                  true, //set it true, so that user will not able to edit text
+                      true, //set it true, so that user will not able to edit text
                   onTap: () async {
                     DateTime? pickedDate = await showDatePicker(
                         context: context,
@@ -351,20 +439,15 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                         lastDate: DateTime(2101));
 
                     if (pickedDate != null) {
-                      print(
-                          pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                       String formattedDate =
-                      DateFormat('yyyy-MM-dd').format(pickedDate);
-                      print(
-                          formattedDate); //formatted date output using intl package =>  2021-03-16
-                      //you can implement different kind of Date Format here according to your requirement
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
 
                       setState(() {
                         _startedDate.text =
                             formattedDate; //set output date to TextField value.
                       });
                     } else {
-                      print("Date is not selected");
+
                     }
                   },
                 )),
@@ -376,10 +459,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                 width: MediaQuery.of(context).size.width - 40,
                 child: ElevatedButton(
                   onPressed: () {
-                    if(!registering){
                       editEmployee(context);
-                    }
-
                   },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
@@ -387,10 +467,15 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4)))),
-                  child: registering ? CircularProgressIndicator(strokeWidth: 1.6,color: Colors.white,):const Text(
-                    "Add",
-                    style: TextStyle(color: Colors.white, fontSize: 17),
-                  ),
+                  child: registering
+                      ? const CircularProgressIndicator(
+                          strokeWidth: 1.6,
+                          color: Colors.white,
+                        )
+                      :   Text(
+                    AppLocalizations.of(context)!.update,
+                          style: const TextStyle(color: Colors.white, fontSize: 17),
+                        ),
                 )),
           ],
         ),
@@ -398,77 +483,4 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
     );
   }
 
-  Widget bilanci() {
-    return Container(
-      width: 80,
-      height: 44,
-      decoration: BoxDecoration(
-          color: const Color.fromRGBO(142, 255, 155, 0.44),
-          borderRadius: BorderRadius.circular(10)),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Text(
-              "BILANCI",
-              style: TextStyle(
-                  color: Color.fromRGBO(17, 62, 33, 1),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500),
-            ),
-          ),
-          Center(
-            child: Text(
-              "100€",
-              style: TextStyle(
-                  color: Color.fromRGBO(51, 229, 69, 1),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String failureResponse(Failure failure) {
-    if (failure is ServerFailure) {
-      return "Diqka shkoi gabim!";
-    } else if (failure is DuplicateDataFailure) {
-      return "Keto te dhena ekzistojne!";
-    } else if (failure is EmptyDataFailure) {
-      return "Ju lutem plotesoni te dhenat!";
-    } else if (failure is OfflineFailure) {
-      return "Keni problem me internet";
-    } else {
-      return "Ju lutem provoni perseri";
-    }
-  }
-
-  showErroModal(String errorTitle){
-    showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context){
-      return Padding(
-        padding: const EdgeInsets.only(left: 20,right: 20,bottom: 20),
-        child: Container(
-          width: getPhoneWidth(context),
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20)
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 15),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(errorTitle,textAlign: TextAlign.center,style: GoogleFonts.poppins(fontSize: 20,color: Colors.black),),
-                SizedBox(height: 20,),
-                TextButton(onPressed: (){
-                  Navigator.pop(context);
-                }, child: Text("Largo"))
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
 }

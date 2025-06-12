@@ -1,5 +1,5 @@
 
-import 'package:hr_smart/features/models/user_model.dart';
+import 'package:business_menagament/features/models/user_model.dart';
 
 class EmployeeModel {
   dynamic id;
@@ -11,6 +11,7 @@ class EmployeeModel {
   dynamic transactions;
   dynamic closedMonths;
   dynamic allowedDebt;
+  bool? withinSalary;
   dynamic startedDate;
   String? status;
   String? createdAt;
@@ -28,6 +29,7 @@ class EmployeeModel {
     this.transactions,
     this.closedMonths,
     this.allowedDebt,
+    this.withinSalary,
     this.startedDate,
     this.status,
     this.createdAt,
@@ -47,6 +49,7 @@ class EmployeeModel {
       type: json['type'],
       status: json['status'],
       salary: json['salary'],
+      withinSalary: json['within_salary'],
       image: json['image'],
       transactions: json['transactions'],
       closedMonths: json['monthCheckouts'],
@@ -105,6 +108,7 @@ class EmployeeModel {
         "type": type,
         "business": business,
         "salary": salary,
+        "within_salary": withinSalary,
         "image": image,
         "allowed_debt": allowedDebt,
         "started_date": startedDate,

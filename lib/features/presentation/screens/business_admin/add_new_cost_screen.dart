@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_cost_controller.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/providers/checkout_provider.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_cost_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';

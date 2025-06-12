@@ -1,8 +1,8 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/features/models/checkout_model.dart';
-import 'package:hr_smart/features/presentation/providers/checkout_provider.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/features/models/checkout_model.dart';
+import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,7 +53,7 @@ class _CheckoutUpdateScreenState extends State<CheckoutUpdateScreen> {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
     await checkoutProvider.closeCheckout(context,
-        checkoutProvider.getActiveCheckout()!.id, double.parse(_price.text));
+        checkoutProvider.getCheckoutModel()!.id, double.parse(_price.text));
     setState(() => startingCheckout = false);
   }
 
@@ -98,9 +98,7 @@ class _CheckoutUpdateScreenState extends State<CheckoutUpdateScreen> {
                   } else {
                     if (checkoutProvider.getActiveCheckout() != null) {
                       if (pickedDate.isBefore(DateFormat('yyyy-MM-dd')
-                          .parse(checkoutProvider
-                              .getActiveCheckout()!
-                              .startedDate!))) {
+                          .parse(checkoutProvider.getCheckoutModel()!.startedDate!))) {
                         showErroModal(
                             context, "Data nuk duhet te jete me e vogel se sot",
                             size: 18);
@@ -108,7 +106,7 @@ class _CheckoutUpdateScreenState extends State<CheckoutUpdateScreen> {
                       else  if (pickedDate
                           .isAfter(DateFormat('yyyy-MM-dd')
                           .parse(checkoutProvider
-                          .getActiveCheckout()!
+                          .getCheckoutModel()!
                           .startedDate!))) {
                         showErroModal(context,
                             "KUJDES!\nKeni zgjedhur daten me te madhe se data e startimit te arkes",

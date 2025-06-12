@@ -1,8 +1,8 @@
-import 'package:hr_smart/features/presentation/screens/business_admin/employees_list_screen.dart';
-import 'package:hr_smart/features/presentation/screens/business_admin/new_employee.dart';
-import 'package:hr_smart/features/presentation/screens/business_admin/add_new_cost_screen.dart';
-import 'package:hr_smart/view/signup.dart';
-import 'package:hr_smart/features/presentation/screens/business_admin/checkout_screen.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/employees_list_screen.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/new_employee.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/add_new_cost_screen.dart';
+import 'package:business_menagament/view/signup.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:hr_smart/core/consts/dimensions.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 String getDateFormat(String updatedAt) {
   // Parse the input date string
   DateTime parsedDate = DateTime.parse(updatedAt).add(const Duration(hours: 2));
@@ -12,18 +13,29 @@ String getDateFormat(String updatedAt) {
       "${getMonthName(parsedDate.month)} ${parsedDate.day}, ${parsedDate.year} - $time";
   return myDate;
 }
+
+String getDateFormat2(String updatedAt) {
+  // Parse the input date string
+  DateTime parsedDate = DateTime.parse(updatedAt).add(const Duration(hours: 2));
+  String myDate =
+      "${getMonthName(parsedDate.month)} ${parsedDate.day}, ${parsedDate.year}";
+  return myDate;
+}
+
 String getTimeFormat(String updatedAt) {
   // Parse the input date string
   DateTime parsedDate = DateTime.parse(updatedAt).add(const Duration(hours: 2));
   String time = DateFormat("HH:mm:ss").format(parsedDate);
   return time;
 }
+
 String getDateOnlyFormat(String updatedAt) {
   // Parse the input date string
   DateTime parsedDate = DateTime.parse(updatedAt).add(const Duration(hours: 2));
   String time = DateFormat("yyyy-MM-dd").format(parsedDate);
   return time;
 }
+
 String getMonthOnlyFormat(String updatedAt) {
   // Parse the input date string
   DateTime parsedDate = DateTime.parse(updatedAt).add(const Duration(hours: 2));
@@ -86,3 +98,13 @@ List<String> months = [
   "Nentor",
   "Dhjetor",
 ];
+
+List<String> getStatisticsSearchMethodArray() {
+  return ["1D", "1W", "1M", "1V", "Te Gjitha"];
+}
+
+convertToFlag(countryCode){
+  String flag = countryCode.toUpperCase().replaceAllMapped(RegExp(r'[A-Z]'),
+          (match) => String.fromCharCode(match.group(0).codeUnitAt(0) + 127397));
+  return flag;
+}

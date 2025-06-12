@@ -1,6 +1,5 @@
 
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 getPhoneWidth(context) => MediaQuery.of(context).size.width;

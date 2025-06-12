@@ -1,4 +1,4 @@
-import 'package:hr_smart/features/models/user_model.dart';
+import 'package:business_menagament/features/models/user_model.dart';
 
 class MonthCheckoutModel {
   dynamic id;

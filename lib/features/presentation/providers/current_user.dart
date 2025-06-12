@@ -1,8 +1,8 @@
 
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/core/storage/local_storage.dart';
-import 'package:hr_smart/features/models/user_model.dart';
-import 'package:hr_smart/features/presentation/screens/credentials_screen.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/features/models/user_model.dart';
+import 'package:business_menagament/features/presentation/screens/credentials_screen.dart';
 import 'package:flutter/material.dart';
 
 class CurrentUser extends ChangeNotifier {

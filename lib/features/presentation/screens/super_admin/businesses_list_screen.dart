@@ -1,5 +1,5 @@
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/widgets/form_widget.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';

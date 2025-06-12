@@ -1,13 +1,15 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/consts/utils.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/models/month_checkout_model.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/providers/checkout_provider.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/screens/business_admin/edit_employee.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/consts/utils.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/month_checkout_model.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/edit_employee.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:business_menagament/l10n/app_localizations.dart';
 
 class EmployeeDetails extends StatefulWidget {
   final EmployeeModel employeeModel;
@@ -34,6 +37,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
   FlipCardController? _controller;
   bool searchByMonth = true;
   bool closingMonth = false;
+  bool searching = false;
   PageController yearsController = PageController(
     viewportFraction: 0.2,
     initialPage: 0, // Set the initial selected page
@@ -63,17 +67,18 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
   }
 
   getEmployees() async {
+    setState(() => searching = true);
     var businessProvider =
         Provider.of<BusinessProvider>(context, listen: false);
     if (searchByMonth) {
       transactions = (await businessProvider.getEmployeeExpenses(
           context, widget.employeeModel.id, searchYear,
-          month: searchMonth))!;
+          month: searchMonth)) ?? [] ;
     } else {
       transactions = (await businessProvider.getEmployeeExpenses(
-          context, widget.employeeModel.id, searchYear))!;
+          context, widget.employeeModel.id, searchYear)) ?? [];
     }
-    setState(() {});
+    setState(() => searching = false);
   }
 
   closeMonth() async {
@@ -82,10 +87,10 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
         Provider.of<CheckoutProvider>(context, listen: false);
     if (closedPrice.text.isEmpty) {
       Navigator.pop(context);
-      showErroModal(context, "Nuk keni shtypur qmimin e mbylljes se muajit!");
+      showErroModal(context, AppLocalizations.of(context)!.noClosingMonthPrice);
       return;
     }
-    var lastPrice =  double.parse(closedPrice.text);
+    var lastPrice = double.parse(closedPrice.text);
     var left = widget.employeeModel.salary - double.parse(closedPrice.text);
     MonthCheckoutModel monthCheckoutModel = MonthCheckoutModel(
       userModel: widget.employeeModel.user!,
@@ -113,19 +118,31 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
     }
   }
 
-  checkThisMonthStatus(){
-    if(widget.employeeModel.closedMonths.isEmpty){
+  checkThisMonthStatus() {
+    if (widget.employeeModel.closedMonths.isEmpty) {
       return false;
     }
     var thisMonth = widget.employeeModel.closedMonths.last;
     var date = DateTime.parse(thisMonth['updatedAt']);
-    if(date.month == DateTime.now().month){
+    if (date.month == DateTime.now().month) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
+
+  deleteEmployee() async {
+    BusinessAdminController businessAdminController = BusinessAdminController();
+    var result = await businessAdminController.deleteEmployee(
+        context, widget.employeeModel.user!.id);
+    result.fold((failure) {
+      showFailureModal(context, failure);
+    }, (results) {
+      Navigator.pop(context);
+      showErroModal(context, AppLocalizations.of(context)!.deletedEmployee);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,7 +153,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
         surfaceTintColor: Colors.white,
         elevation: 0,
         title: Text(
-          "Detajet",
+          AppLocalizations.of(context)!.details,
           style: GoogleFonts.poppins(fontSize: 17),
         ),
         centerTitle: false,
@@ -145,13 +162,14 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
             children: [
               GestureDetector(
                 onTap: () {
-                  if(checkThisMonthStatus()){
+                  if (checkThisMonthStatus()) {
                     showModalBottomSheet(
                         context: context,
                         builder: (context) {
                           return Padding(
                             padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).viewInsets.bottom),
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
                             child: Container(
                               width: getPhoneWidth(context),
                               padding: const EdgeInsets.symmetric(
@@ -160,131 +178,143 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 child: Column(
                                   children: [
                                     SizedBox(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           child: TextField(
-                                            controller: TextEditingController(text: "Rroga e keti muaji eshte: ${widget.employeeModel.closedMonths.last['closed_price']}"),
+                                            controller: TextEditingController(
+                                                text:
+                                                    "${AppLocalizations.of(context)!.thisMonthSalaryIs} ${widget.employeeModel.closedMonths.last['closed_price']}"),
                                             keyboardType: const TextInputType
                                                 .numberWithOptions(
                                                 decimal:
-                                                true), // Allow decimal numbers
+                                                    true), // Allow decimal numbers
                                             inputFormatters: <TextInputFormatter>[
                                               FilteringTextInputFormatter.allow(
                                                   RegExp(
                                                       r'^\d+(\.\d{0,2})?$')), // Allow up to 2 decimal places
                                             ],
                                             decoration: InputDecoration(
-                                                hintText: 'Cmimi mbylljes',
+                                                hintText:
+                                                    AppLocalizations.of(context)!
+                                                        .closedPrice,
                                                 hintStyle: GoogleFonts.inter(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 15,
-                                                    color:
-                                                    const Color(0xff878787)),
+                                                    color: const Color(
+                                                        0xff878787)),
                                                 border: InputBorder.none,
                                                 isDense: true,
                                                 contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
                                                 enabledBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                     borderSide: const BorderSide(
                                                         color:
-                                                        Color(0xffdadada))),
+                                                            Color(0xffdadada))),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    borderSide: const BorderSide(
-                                                        color:
-                                                        Color(0xffdadada)))),
+                                                        BorderRadius.circular(10),
+                                                    borderSide: const BorderSide(color: Color(0xffdadada)))),
                                           ),
                                         )),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           child: TextField(
-                                            controller: TextEditingController(text: "Borgji mbetur eshte: ${widget.employeeModel.closedMonths.last['closed_debt']}"),
+                                            controller: TextEditingController(
+                                                text:
+                                                    "${AppLocalizations.of(context)!.leftDebtIs} ${widget.employeeModel.closedMonths.last['closed_debt']}"),
                                             keyboardType: const TextInputType
                                                 .numberWithOptions(
                                                 decimal:
-                                                true), // Allow decimal numbers
+                                                    true), // Allow decimal numbers
                                             inputFormatters: <TextInputFormatter>[
                                               FilteringTextInputFormatter.allow(
                                                   RegExp(
                                                       r'^\d+(\.\d{0,2})?$')), // Allow up to 2 decimal places
                                             ],
                                             decoration: InputDecoration(
-                                                hintText: 'Cmimi mbylljes',
+                                                hintText:
+                                                    AppLocalizations.of(context)!
+                                                        .closedPrice,
                                                 hintStyle: GoogleFonts.inter(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 15,
-                                                    color:
-                                                    const Color(0xff878787)),
+                                                    color: const Color(
+                                                        0xff878787)),
                                                 border: InputBorder.none,
                                                 isDense: true,
                                                 contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
                                                 enabledBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                     borderSide: const BorderSide(
                                                         color:
-                                                        Color(0xffdadada))),
+                                                            Color(0xffdadada))),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    borderSide: const BorderSide(
-                                                        color:
-                                                        Color(0xffdadada)))),
+                                                        BorderRadius.circular(10),
+                                                    borderSide: const BorderSide(color: Color(0xffdadada)))),
                                           ),
                                         )),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           child: TextField(
-                                            controller: TextEditingController(text: "Pershkrimi:  ${widget.employeeModel.closedMonths.last['description']}"),
+                                            controller: TextEditingController(
+                                                text:
+                                                    "Pershkrimi:  ${widget.employeeModel.closedMonths.last['description']}"),
                                             minLines: 3,
                                             maxLines: 6,
                                             decoration: InputDecoration(
-                                                hintText: 'Pershkrimi',
+                                                hintText:
+                                                    AppLocalizations.of(context)!
+                                                        .description,
                                                 hintStyle: GoogleFonts.inter(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 15,
-                                                    color:
-                                                    const Color(0xff878787)),
+                                                    color: const Color(
+                                                        0xff878787)),
                                                 border: InputBorder.none,
                                                 isDense: true,
                                                 contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15,
-                                                    vertical: 10),
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
                                                 enabledBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                     borderSide: const BorderSide(
                                                         color:
-                                                        Color(0xffdadada))),
+                                                            Color(0xffdadada))),
                                                 focusedBorder: OutlineInputBorder(
                                                     borderRadius:
-                                                    BorderRadius.circular(10),
-                                                    borderSide: const BorderSide(
-                                                        color:
-                                                        Color(0xffdadada)))),
+                                                        BorderRadius.circular(10),
+                                                    borderSide: const BorderSide(color: Color(0xffdadada)))),
                                           ),
                                         )),
                                     const SizedBox(
@@ -302,36 +332,39 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                             },
                                             style: ButtonStyle(
                                                 backgroundColor:
-                                                MaterialStateProperty.all(
+                                                    MaterialStateProperty.all(
                                                   Colors.blue,
                                                 ),
                                                 foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.white),
+                                                    MaterialStateProperty.all(
+                                                        Colors.white),
                                                 shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)))),
+                                                            BorderRadius
+                                                                .circular(
+                                                                    10)))),
                                             child: Center(
                                               child: closingMonth
                                                   ? const SizedBox(
-                                                width: 20,
-                                                height: 20,
-                                                child:
-                                                CircularProgressIndicator(
-                                                  strokeWidth: 1.4,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                                  : const Text(
-                                                'Mbyll muajin',
-                                                style: TextStyle(
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                    FontWeight.w500),
-                                              ),
+                                                      width: 20,
+                                                      height: 20,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        strokeWidth: 1.4,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .closeMonth,
+                                                      style: const TextStyle(
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
                                             ),
                                           ),
                                         )),
@@ -384,7 +417,9 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                                     r'^\d+(\.\d{0,2})?$')), // Allow up to 2 decimal places
                                           ],
                                           decoration: InputDecoration(
-                                              hintText: 'Cmimi mbylljes',
+                                              hintText:
+                                                  AppLocalizations.of(context)!
+                                                      .closedPrice,
                                               hintStyle: GoogleFonts.inter(
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 15,
@@ -423,7 +458,9 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                           minLines: 3,
                                           maxLines: 6,
                                           decoration: InputDecoration(
-                                              hintText: 'Pershkrimi',
+                                              hintText:
+                                                  AppLocalizations.of(context)!
+                                                      .description,
                                               hintStyle: GoogleFonts.inter(
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 15,
@@ -487,9 +524,11 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                                       color: Colors.white,
                                                     ),
                                                   )
-                                                : const Text(
-                                                    'Mbyll muajin',
-                                                    style: TextStyle(
+                                                : Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .closeMonth,
+                                                    style: const TextStyle(
                                                         fontSize: 17,
                                                         fontWeight:
                                                             FontWeight.w500),
@@ -515,12 +554,16 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                   child: Row(
                     children: [
                       Text(
-                        checkThisMonthStatus() ? "Muaji i myllur":"Mbyll muajin",
+                        checkThisMonthStatus()
+                            ? AppLocalizations.of(context)!.closedMonth
+                            : AppLocalizations.of(context)!.closeMonth,
                         style: GoogleFonts.poppins(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       // IconButton(onPressed: (){}, icon: Icon(Icons.check_sharp)),
-                      checkThisMonthStatus() ? SizedBox():const Icon(Icons.arrow_forward),
+                      checkThisMonthStatus()
+                          ? const SizedBox()
+                          : const Icon(Icons.arrow_forward),
                     ],
                   ),
                 ),
@@ -578,7 +621,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Rroga",
+                          AppLocalizations.of(context)!.salary,
                           style: GoogleFonts.poppins(
                               color: const Color(0xffa5adbf), fontSize: 13),
                         ),
@@ -624,7 +667,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Terheqje",
+                          AppLocalizations.of(context)!.widthdraw,
                           style: GoogleFonts.poppins(
                               color: const Color(0xffa5adbf), fontSize: 13),
                         ),
@@ -681,7 +724,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Balanci mujor",
+                          AppLocalizations.of(context)!.monthlyBalance,
                           style: GoogleFonts.poppins(
                               color: const Color(0xffa5adbf), fontSize: 13),
                         ),
@@ -727,7 +770,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Balanci total",
+                          AppLocalizations.of(context)!.totalBalance,
                           style: GoogleFonts.poppins(
                               color: const Color(0xffa5adbf), fontSize: 13),
                         ),
@@ -778,7 +821,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 borderRadius: BorderRadius.circular(100),
                                 color: Colors.white),
                             child: Text(
-                              "Muaji",
+                              AppLocalizations.of(context)!.month,
                               style: GoogleFonts.poppins(
                                   color: Colors.transparent),
                             ),
@@ -805,7 +848,9 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 width: (getPhoneWidth(context) - 150) / 2 - 10,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 8),
-                                child: const Center(child: Text("Muaji")),
+                                child: Center(
+                                    child: Text(
+                                        AppLocalizations.of(context)!.month)),
                               ),
                             ),
                             GestureDetector(
@@ -822,7 +867,9 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 width: (getPhoneWidth(context) - 130) / 2 - 10,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 8),
-                                child: const Center(child: Text("Viti")),
+                                child: Center(
+                                    child: Text(
+                                        AppLocalizations.of(context)!.year)),
                               ),
                             ),
                           ],
@@ -834,19 +881,36 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    getEmployees();
+                    if (!searching) getEmployees();
                   },
                   child: Container(
                     width: 100,
                     height: 38.9,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
-                        color: Colors.blue),
+                        gradient: const LinearGradient(
+                            colors: [
+                              Color(0xff3f617e),
+                              Color(0xff324a60),
+                              Color(0xff1a2836),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            stops: [0.2, 0.5, 1])),
                     child: Center(
-                        child: Text(
-                      "Kerko",
-                      style: GoogleFonts.nunito(color: Colors.white),
-                    )),
+                        child: searching
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                AppLocalizations.of(context)!.search,
+                                style: GoogleFonts.nunito(color: Colors.white),
+                              )),
                   ),
                 ),
               ],
@@ -881,14 +945,23 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                             searchMonth = index + 1;
                           });
                         },
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
                           key: Key(months[index]),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
                             border: Border.all(color: const Color(0xffefefef)),
-                            color: searchMonth == index + 1
-                                ? Colors.blue
-                                : Colors.white,
+                            gradient: LinearGradient(
+                                colors: searchMonth != index + 1
+                                    ? [Colors.white, Colors.white, Colors.white]
+                                    : [
+                                        const Color(0xff3f617e),
+                                        const Color(0xff324a60),
+                                        const Color(0xff1a2836),
+                                      ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                stops: const [0.2, 0.5, 1]),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 5, vertical: 5),
@@ -924,15 +997,25 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                           searchYear = DateTime.now().year - index;
                         });
                       },
-                      child: Container(
+                      child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
                           key: Key((DateTime.now().year - index).toString()),
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border:
-                                  Border.all(color: const Color(0xffefefef)),
-                              color: (DateTime.now().year - index) == searchYear
-                                  ? Colors.blue
-                                  : Colors.white),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(color: const Color(0xffefefef)),
+                            gradient: LinearGradient(
+                                colors: (DateTime.now().year - index) !=
+                                        searchYear
+                                    ? [Colors.white, Colors.white, Colors.white]
+                                    : [
+                                        const Color(0xff3f617e),
+                                        const Color(0xff324a60),
+                                        const Color(0xff1a2836),
+                                      ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                stops: const [0.2, 0.5, 1]),
+                          ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 5, vertical: 5),
                           child: Center(
@@ -973,11 +1056,11 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                           children: [
                             SizedBox(
                               width: MediaQuery.of(context).size.width / 4,
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'Arsyeja',
-                                  style: TextStyle(
+                                  AppLocalizations.of(context)!.reason,
+                                  style: const TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -985,31 +1068,31 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width / 4,
-                              child: const Text(
-                                'Cmimi',
-                                style: TextStyle(
+                              child: Text(
+                                AppLocalizations.of(context)!.price,
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600),
                               ),
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width / 4,
-                              child: const Text(
-                                'Pershkrimi',
-                                style: TextStyle(
+                              child: Text(
+                                AppLocalizations.of(context)!.description,
+                                style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600),
                               ),
                             ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 4,
-                              child: const Text(
-                                'Opsioni',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            )
+                            // SizedBox(
+                            //   width: MediaQuery.of(context).size.width / 4,
+                            //   child: Text(
+                            //     AppLocalizations.of(context)!.opsions,
+                            //     style: const TextStyle(
+                            //         color: Colors.white,
+                            //         fontWeight: FontWeight.w600),
+                            //   ),
+                            // )
                           ],
                         ),
                       ),
@@ -1061,6 +1144,11 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                 widget.employeeModel.user!.fullName!,
                                 style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                widget.employeeModel.business['name'],
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w400),
                               ),
                               // FutureBuilder<String>(
                               //   future: getDateFormat(
@@ -1117,7 +1205,14 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                           GestureDetector(
                             onTap: () {
                               showErroModal(context,
-                                  "Fshirja nuk mund e behet, ju lutem prisni deri ne njoftimin e radhes!");
+                                  AppLocalizations.of(context)!.deleteAlertText,
+                                  options: true, function: () {
+                                Navigator.pop(context);
+                                deleteEmployee();
+                              });
+                              // deleteEmployee();
+                              // showErroModal(context,
+                              //     "Fshirja nuk mund e behet, ju lutem prisni deri ne njoftimin e radhes!");
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -1175,16 +1270,16 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
               style: const TextStyle(color: Colors.black),
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 4,
-            child: TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Fshije',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: MediaQuery.of(context).size.width / 4,
+          //   child: TextButton(
+          //     onPressed: () {},
+          //     child: const Text(
+          //       'Fshije',
+          //       style: TextStyle(color: Colors.black),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

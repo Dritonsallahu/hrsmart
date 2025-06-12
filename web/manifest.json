@@ -1,6 +1,6 @@
 {
-    "name": "hr_smart",
-    "short_name": "hr_smart",
+    "name": "hrsmart",
+    "short_name": "hrsmart",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

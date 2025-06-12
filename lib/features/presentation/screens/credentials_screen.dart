@@ -1,10 +1,11 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/features/controllers/login_controller.dart';
-import 'package:hr_smart/features/controllers/registration_controller.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
-import 'package:hr_smart/features/presentation/widgets/login_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/register_widgets.dart';
+import 'package:business_menagament/core/consts/colors.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/features/controllers/login_controller.dart';
+import 'package:business_menagament/features/controllers/registration_controller.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/features/presentation/widgets/login_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/register_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:expandable_page_view/expandable_page_view.dart';
@@ -57,8 +58,11 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
     // Define the registration cooldown period (1 minute in milliseconds)
     const registrationCooldown = 30000; // 1 minute
     setState(() => authorizing = true);
-    if(businessName.text.isEmpty || phoneNumber.text.isEmpty || city.text.isEmpty){
-      showErroModal(context, "Ju lutem plotesoni te gjitha fushat e meposhtme!", size: 16);
+    if (businessName.text.isEmpty ||
+        phoneNumber.text.isEmpty ||
+        city.text.isEmpty) {
+      showErroModal(context, "Ju lutem plotesoni te gjitha fushat e meposhtme!",
+          size: 16);
       setState(() => authorizing = false);
       return;
     }
@@ -131,30 +135,9 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
   Widget build(BuildContext context) {
     print(authorizing);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
-          SizedBox(
-            width: getPhoneWidth(context),
-            height: getPhoneHeight(context),
-            child: Hero(
-                tag: "background-image-tag",
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      "assets/images/background.jpeg",
-                      fit: BoxFit.cover,
-                    ),
-                    Positioned(
-                        child: Container(
-                      width: getPhoneWidth(context),
-                      height: getPhoneHeight(context),
-                      decoration:
-                          BoxDecoration(color: Colors.black.withOpacity(0.4)),
-                    ))
-                  ],
-                )),
-          ),
           Positioned(
               width: getPhoneWidth(context),
               height: getPhoneHeight(context),
@@ -166,12 +149,23 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
                     child: Column(
                       children: [
                         Hero(
-                            tag: "caffe-icon-tag",
-                            child: Image.asset(
-                              "assets/icons/caffee-icon-3.png",
-                            )),
+                          tag: "caffe-icon-tag",
+                          child: Image.asset(
+                            "assets/logos/logo.png",
+                            width: getPhoneWidth(context) - 150,
+
+                          ),
+                        ),
+                        Text(
+                          "MENAGJIMI I BURIMEVE NJEREZORE",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.inter(
+                              fontSize: 27,
+                              fontWeight: FontWeight.w700,
+                              color: defaultColor3),
+                        ),
                         const SizedBox(
-                          height: 20,
+                          height: 40,
                         ),
                         SizedBox(
                           width: getPhoneWidth(context) - 70,
@@ -193,15 +187,15 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(100),
                                       color: authorizeSelected
-                                          ? const Color(0xffE4D5C9)
+                                          ? defaultColor3
                                           : Colors.transparent),
                                   child: Center(
                                     child: Text(
                                       "Autorizohu",
                                       style: GoogleFonts.poppins(
                                           color: authorizeSelected
-                                              ? Colors.black
-                                              : Colors.white),
+                                              ? Colors.white
+                                              : Colors.black),
                                     ),
                                   ),
                                 ),
@@ -221,14 +215,14 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
                                       borderRadius: BorderRadius.circular(100),
                                       color: authorizeSelected
                                           ? Colors.transparent
-                                          : const Color(0xffE4D5C9)),
+                                          : defaultColor3),
                                   child: Center(
                                     child: Text(
                                       "Abonohuni",
                                       style: GoogleFonts.poppins(
                                           color: authorizeSelected
-                                              ? Colors.white
-                                              : Colors.black),
+                                              ? Colors.black
+                                              : Colors.white),
                                     ),
                                   ),
                                 ),
@@ -281,30 +275,38 @@ class _CredentialsScreenState extends State<CredentialsScreen> {
                                 // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => AdminHome(index: 0)));
                               },
                               child: AnimatedContainer(
+                                width: getPhoneWidth(context) - 60,
                                 duration: const Duration(milliseconds: 500),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 10),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    color: const Color(0xffE4D5C9)),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: defaultColor3),
                                 child: authorizing
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 1.5,
-                                        ))
-                                    : Text(
-                                        authorizeSelected
-                                            ? "Hyr"
-                                            : "Bej kerkese",
-                                        style: GoogleFonts.poppins(
-                                            color: Colors.black),
+                                    ? const Center(
+                                        child: SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 1.5,
+                                            )),
+                                      )
+                                    : Center(
+                                        child: Text(
+                                          authorizeSelected
+                                              ? "Hyr"
+                                              : "Bej kerkese",
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white),
+                                        ),
                                       ),
                               ),
                             ),
                           ],
-                        )
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
                       ],
                     ),
                   ),

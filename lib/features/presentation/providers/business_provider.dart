@@ -1,15 +1,16 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_admin_controller.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_cost_controller.dart';
-import 'package:hr_smart/features/controllers/super_admin_controllers/super_admin_controller.dart';
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/models/month_checkout_model.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/checkout_provider.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_transaction_controller.dart';
+import 'package:business_menagament/features/controllers/super_admin_controllers/super_admin_controller.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/month_checkout_model.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/navigator_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -28,10 +29,8 @@ class BusinessProvider extends ChangeNotifier {
   List<BusinessModel> _testBusinessesFilter = [];
 
   List<EmployeeModel> _employeesList = [];
-  List<EmployeeModel> _employeesListFilter = [];
 
   List<TransactionModel> _expensesList = [];
-  List<TransactionModel> _expensesListFilter = [];
 
   List<BusinessModel> getActiveBusinesses() => _activeBusinesses;
   List<BusinessModel> getExpiredBusinesses() => _expiredBusinesses;
@@ -40,11 +39,15 @@ class BusinessProvider extends ChangeNotifier {
   List<EmployeeModel> getEmployeeList() => _employeesList;
   List<TransactionModel> getExpensesList() => _expensesList;
 
-
+  bool transactionsFirstLoad = false;
+  bool getTransactionFirstLoad() => transactionsFirstLoad;
+  changeTransactionFirstLoad(bool status) {
+    transactionsFirstLoad = status;
+    notifyListeners();
+  }
 
   addNewBusiness(context, BusinessModel businessModel,
       {String? username, String? email, String? password}) async {
-
     SuperAdminController businessController = SuperAdminController();
     var data = await businessController.addNewBusiness(businessModel,
         email: email, username: username, password: password);
@@ -117,9 +120,17 @@ class BusinessProvider extends ChangeNotifier {
       showFailureModal(context, failure);
     }, (results) {
       _employeesList = results;
-      _employeesListFilter = results;
       notifyListeners();
     });
+  }
+
+  updateEmployee(EmployeeModel employeeModel) {
+    for (var element in _employeesList) {
+      if (element.id == employeeModel.id) {
+        element = employeeModel;
+      }
+    }
+    notifyListeners();
   }
 
   updateEmployeeMonthCheckout(MonthCheckoutModel monthCheckoutModel) {
@@ -135,32 +146,99 @@ class BusinessProvider extends ChangeNotifier {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
     double count = 0.0;
-    for (var element in _employeesList) {
-      element.transactions.forEach((transaction) {
-        var dbDate = DateTime.parse(transaction['updatedAt']);
-        if (dbDate.month == DateTime.now().month &&
-            dbDate.year == DateTime.now().year &&
-            dbDate.day == DateTime.now().day) {
-          var price = transaction['price'].toDouble();
-          count += price;
-        }
-      });
-    }
-    if (checkoutProvider.getActiveCheckout() != null) {
-      return (checkoutProvider.getActiveCheckout()!.startPrice - count);
+
+    if (checkoutProvider.getActiveCheckout() == CheckoutStatus.opened) {
+      for (var element in _expensesList) {
+
+
+          var dbDate = DateTime.parse(element.updatedAt);
+          if (element.checkout ==
+              checkoutProvider.getCheckoutModel()!.id) {
+            var price = element.price!.toDouble();
+            count += price;
+          }
+
+      }
+      return (checkoutProvider.getCheckoutModel()!.startPrice - count);
     } else {
-      return (0.0).toString();
+      return 0.0 ;
     }
   }
 
+  double countTransactions(context, employeeId) {
+    double count = 0.0;
+
+    for (var element in _employeesList) {
+      if (element.id == employeeId) {
+        element.transactions.forEach((transaction) {
+          var dbDate = DateTime.parse(transaction['updatedAt']);
+          if (dbDate.month == DateTime.now().month &&
+              dbDate.year == DateTime.now().year &&
+              dbDate.day == DateTime.now().day) {
+            var price = transaction['price'].toDouble();
+            count += price;
+          }
+        });
+      }
+    }
+
+    return count;
+  }
+
+  addNewEmployee(context, employee) async {
+    BusinessAdminController businessAdminController =
+    BusinessAdminController();
+    var result = await businessAdminController.addNewEmployee(employee);
+    return result.fold((failure) {
+      showFailureModal(context, failure);
+    }, (result) {
+      getAllEmployees(context);
+      showErroModal(context, "Punetori u shtua me sukses");
+      return result;
+    });
+  }
+
   addNewExpense(context, encodedData) async {
-    BusinessCostController businessCostController = BusinessCostController();
-    var result = await businessCostController.addNewExpense(encodedData);
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
+    var result = await businessCostController.addNewTransaction(encodedData);
+    result.fold((failure) {
+      showFailureModal(context, failure);
+    }, (TransactionModel transactionModel) {
+      var navProvider = Provider.of<NavigatorProvider>(context, listen: false);
+      navProvider.changeNavigatorItem(NavigatorItems.home);
+      navProvider.changePage(0);
+      getExpenses(context);
+      showErroModal(context, "Shpenzimi u shtua me sukses");
+    });
+  }
+
+  editTransaction(context, String tId, dynamic encodedData) async {
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
+    var result = await businessCostController.editTransaction(tId, encodedData);
     result.fold((failure) {
       showFailureModal(context, failure);
     }, (results) {
+      getExpenses(context);
+      getAllEmployees(context);
       Navigator.pop(context);
-      showErroModal(context, "Shpenzimi u shtua me sukses");
+      showErroModal(context, "Shpenzimi u perditesua me sukses");
+    });
+  }
+
+  deleteTransaction(context, tId) async {
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
+    var result = await businessCostController.deleteTransaction(tId);
+    result.fold((failure) {
+      Navigator.pop(context);
+      showFailureModal(context, failure);
+    }, (results) async {
+      await getExpenses(context);
+      getAllEmployees(context);
+      Navigator.pop(context);
+      showErroModal(context, "Shpenzimi eshte fshire me sukses!");
     });
   }
 
@@ -174,24 +252,69 @@ class BusinessProvider extends ChangeNotifier {
   }
 
   getExpenses(context) async {
-    BusinessCostController businessCostController = BusinessCostController();
-    var result = await businessCostController.getExpenses(context);
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
+    var result = await businessCostController.getTransactions(context);
     return result.fold((failure) {
       showFailureModal(context, failure);
     }, (results) {
       _expensesList = results;
-      _expensesListFilter = results;
       notifyListeners();
     });
   }
 
-  calculateAllExpenses() {
+  getTransactionByCheckout(context, id) async {
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
+    var result =
+        await businessCostController.getTransactionsByCheckout(context, id);
+    return result.fold((failure) {
+      showFailureModal(context, failure);
+    }, (results) {
+      return results;
+    });
+  }
+
+  double calculateAllExpenses(context,{bool includeLastCheckout = false}) {
+    var checkoutProvider =
+        Provider.of<CheckoutProvider>(context, listen: false);
+    var checkout = includeLastCheckout ? checkoutProvider.getCheckoutModelTwo():checkoutProvider.getCheckoutModel();
     double count = 0.0;
-    for (var element in _expensesList) {
-      var elementDate = DateTime.parse(element.updatedAt);
-      var today = DateTime.now();
-      if (elementDate.month == today.month && elementDate.day == today.day) {
-        count += element.price as double;
+    if (checkout != null) {
+      for (var element in _expensesList) {
+        if (element.checkout == checkout.id) {
+          count += element.price as double;
+        }
+      }
+    }
+    return count;
+  }
+
+  calculateEmployeeTransactions(context,{bool includeLastCheckout = false}) {
+    var checkoutProvider =
+        Provider.of<CheckoutProvider>(context, listen: false);
+    var checkout = includeLastCheckout ? checkoutProvider.getCheckoutModelTwo():checkoutProvider.getCheckoutModel();
+    double count = 0.0;
+    if (checkout != null) {
+      for (var element in _expensesList) {
+        if (element.checkout == checkout.id && element.type == "employee") {
+          count += element.price as double;
+        }
+      }
+    }
+    return count;
+  }
+
+  calculateproductsTransactions(context,{bool includeLastCheckout = false}) {
+    var checkoutProvider =
+        Provider.of<CheckoutProvider>(context, listen: false);
+    var checkout = includeLastCheckout ? checkoutProvider.getCheckoutModelTwo():checkoutProvider.getCheckoutModel();
+    double count = 0.0;
+    if (checkout != null) {
+      for (var element in _expensesList) {
+        if (element.checkout == checkout.id && element.type == "product") {
+          count += element.price as double;
+        }
       }
     }
     return count;
@@ -199,9 +322,10 @@ class BusinessProvider extends ChangeNotifier {
 
   Future<List<TransactionModel>?> getEmployeeExpenses(context, id, year,
       {int? month}) async {
-    BusinessCostController businessCostController = BusinessCostController();
+    BusinessTransactionController businessCostController =
+        BusinessTransactionController();
     var result = await businessCostController
-        .getEmployeeExpenses(context, id, year, month: month);
+        .getEmployeeTransactions(context, id, year, month: month);
     return result.fold((failure) {
       showFailureModal(context, failure);
     }, (results) {
@@ -249,7 +373,7 @@ class BusinessProvider extends ChangeNotifier {
                   child: Column(
                     children: [
                       Text(
-                        mapFailureMessage(failure),
+                        showFailureModal(context, failure),
                         style: GoogleFonts.poppins(
                             fontSize: 17, fontWeight: FontWeight.w500),
                       ),
@@ -285,7 +409,6 @@ class BusinessProvider extends ChangeNotifier {
           });
     }, (result) {
       for (var element in result) {
-        print(element.status);
         if (element.status == "approved") {
           _activeBusinesses.add(element);
           _activeBusinessesFilter.add(element);
@@ -295,7 +418,7 @@ class BusinessProvider extends ChangeNotifier {
         } else if (element.status == "expired") {
           _expiredBusinesses.add(element);
           _expiredBusinessesFilter.add(element);
-        }else if (element.status == "testing") {
+        } else if (element.status == "testing") {
           _testBusinesses.add(element);
           _testBusinessesFilter.add(element);
         }
@@ -340,20 +463,5 @@ class BusinessProvider extends ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  mapFailureMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return "Something went wrong!";
-      case OfflineFailure:
-        return "No internet Connection!";
-      case DuplicateDataFailure:
-        return "Data already exists!";
-      case EmptyDataFailure:
-        return "Empty data";
-      case WrongFailure:
-        return "Something went wrong!";
-    }
   }
 }

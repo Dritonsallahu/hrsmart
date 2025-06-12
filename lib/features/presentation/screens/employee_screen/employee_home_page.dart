@@ -1,10 +1,10 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/consts/utils.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/providers/employee_provider.dart';
-import 'package:hr_smart/features/presentation/screens/employee_screen/edit_profile_screen.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/consts/utils.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
+import 'package:business_menagament/features/presentation/screens/employee_screen/edit_profile_screen.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
@@ -201,7 +201,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                                 color: const Color(0xffa5adbf), fontSize: 13),
                           ),
                           Text(
-                            "${currentUser.getUser()!.countTransactions().toStringAsFixed(2)}€",
+                              currentUser.getUser() == null ? "":"${currentUser.getUser()!.countTransactions().toStringAsFixed(2)}€",
                             // " €",
                             style: GoogleFonts.poppins(
                                 color: Colors.black, fontSize: 17.5),
@@ -259,7 +259,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                                 color: const Color(0xffa5adbf), fontSize: 13),
                           ),
                           Text(
-                            "${double.parse(currentUser.getUser()!.salary.toString()) - currentUser.getUser()!.countTransactions()}€",
+                              currentUser.getUser() == null ? "":"${double.parse(currentUser.getUser()!.salary.toString()) - currentUser.getUser()!.countTransactions()}€",
                             // " €",
                             style: GoogleFonts.poppins(
                                 color: Colors.black, fontSize: 17.5),
@@ -640,7 +640,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> {
                                 style: const TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.w600),
                               ),
-                              Text(getDateOnlyFormat(currentUser.getUser()!.user!.updatedAt!))
+                              Text(currentUser.getUser() == null ?  "" :getDateOnlyFormat(getDateOnlyFormat(currentUser.getUser()!.user!.updatedAt!)))
                             ],
                           ),
                         ],

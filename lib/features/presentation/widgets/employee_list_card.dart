@@ -1,8 +1,10 @@
-import 'package:hr_smart/core/consts/utils.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/presentation/screens/business_admin/employee_details.dart';
+import 'package:business_menagament/core/consts/utils.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/employee_details.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class EmployeeListCard extends StatelessWidget {
   final EmployeeModel? employee;
@@ -12,10 +14,12 @@ class EmployeeListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmployeeDetails(employeeModel: employee!,) ));
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmployeeDetails(employeeModel: employee!,) )).then((value) {
+          Provider.of<BusinessProvider>(context,listen: false).getAllEmployees(context);
+        });
       },
       child: Container(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        padding: const EdgeInsets.only(top: 5, bottom: 5),
         width: MediaQuery.of(context).size.width - 30,
         decoration: BoxDecoration(
             color: Colors.white, borderRadius: BorderRadius.circular(19)),

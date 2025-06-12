@@ -1,11 +1,9 @@
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/screens/credentials_screen.dart';
-import 'package:hr_smart/features/presentation/screens/super_admin/businesses_list_screen.dart';
-import 'package:hr_smart/features/presentation/screens/super_admin/new_business_screen.dart';
-import 'package:hr_smart/features/presentation/screens/super_admin/request_business__screen.dart';
-import 'package:hr_smart/view/thanaHead/View/Statistikat.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/screens/super_admin/new_business_screen.dart';
+import 'package:business_menagament/features/presentation/screens/super_admin/request_business__screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -210,11 +208,7 @@ class _AdminHomeState extends State<AdminHome>
                 )),
                 GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Statistikat(),
-                          ));
+
                     },
                     child: const ListTile(
                       hoverColor: Colors.black12,

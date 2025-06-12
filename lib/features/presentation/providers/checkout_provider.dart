@@ -1,77 +1,110 @@
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/checkout_controller.dart';
-import 'package:hr_smart/features/controllers/super_admin_controllers/super_admin_controller.dart';
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/models/checkout_model.dart';
-import 'package:hr_smart/features/models/month_checkout_model.dart';
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/checkout_controller.dart';
+import 'package:business_menagament/features/controllers/super_admin_controllers/super_admin_controller.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/models/checkout_model.dart';
+import 'package:business_menagament/features/models/month_checkout_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+enum CheckoutStatus { checking, opened, closed, passed }
 
 class CheckoutProvider extends ChangeNotifier {
   CheckoutModel? _activeCheckout;
+  CheckoutStatus checkoutStatus = CheckoutStatus.checking;
 
   List<CheckoutModel> _checkoutList = [];
   final List<CheckoutModel> _checkoutListFilter = [];
 
-  CheckoutModel? getActiveCheckout() => _activeCheckout;
+  CheckoutModel? getCheckoutModel() => _activeCheckout;
+
+  CheckoutModel? getCheckoutModelTwo() {
+    if (_activeCheckout != null) return _activeCheckout;
+    if(_checkoutList.isEmpty){
+      return null;
+    }
+    return _checkoutList.first;
+  }
+
+  CheckoutStatus? getActiveCheckout() {
+    if (_activeCheckout != null) {
+      var checkoutDate =
+          DateFormat('yyyy-MM-dd').parse(_activeCheckout!.startedDate!);
+      var today = DateTime.now();
+      var isOpen = checkoutDate.year == today.year &&
+          checkoutDate.month == today.month &&
+          checkoutDate.day == today.day;
+      if (isOpen) {
+        checkoutStatus = CheckoutStatus.opened;
+      } else {
+        checkoutStatus = CheckoutStatus.passed;
+      }
+    } else {
+      checkoutStatus = CheckoutStatus.closed;
+    }
+
+    return checkoutStatus;
+  }
 
   List<CheckoutModel> getCheckoutList() => _checkoutList;
 
-  addCheckOut(CheckoutModel checkoutModel){
+  addCheckOut(CheckoutModel checkoutModel) {
     _activeCheckout = checkoutModel;
     notifyListeners();
   }
 
-  removeCheckout( ){
+  removeCheckout() {
     _activeCheckout = null;
     notifyListeners();
   }
 
-  getCheckout(BuildContext context) async {
+  getCheckoutt(BuildContext context) async {
     CheckoutController checkoutController = CheckoutController();
-    var data = await  checkoutController.getCheckout(context);
+    var data = await checkoutController.getCheckout(context);
     data.fold((failure) {
       showFailureModal(context, failure);
     }, (result) {
       _activeCheckout = result;
-      print("=================");
-      print(result.userModel);
+      notifyListeners();
     });
   }
 
   getCheckouts(BuildContext context) async {
     CheckoutController checkoutController = CheckoutController();
-    var data = await  checkoutController.getCheckouts(context);
+    var data = await checkoutController.getCheckouts(context);
     data.fold((failure) {
       showFailureModal(context, failure);
     }, (result) {
       _checkoutList = result;
-      print("=================");
       notifyListeners();
     });
   }
 
   startCheckout(BuildContext context, CheckoutModel checkoutModel) async {
+    var businessProvider =
+    Provider.of<BusinessProvider>(context, listen: false);
     CheckoutController checkoutController = CheckoutController();
-    var data = await  checkoutController.startCheckout(context,checkoutModel);
+    var data = await checkoutController.startCheckout(context, checkoutModel);
     data.fold((failure) {
       showFailureModal(context, failure);
     }, (result) {
       _activeCheckout = result;
-      print("=================");
-      print(result.userModel);
+      businessProvider.getExpenses(context);
+      notifyListeners();
       Navigator.of(context).pop();
     });
   }
 
-  closeCheckout(BuildContext context,checkoutId, price) async {
+  closeCheckout(BuildContext context, checkoutId, price) async {
     CheckoutController checkoutController = CheckoutController();
-    var data = await  checkoutController.closeCheckout(context,checkoutId,price);
+    var data =
+        await checkoutController.closeCheckout(context, checkoutId, price);
     data.fold((failure) {
       showFailureModal(context, failure);
     }, (result) {
@@ -80,10 +113,13 @@ class CheckoutProvider extends ChangeNotifier {
     });
   }
 
-  closeMonthCheckout(BuildContext context,MonthCheckoutModel monthCheckoutModel) async {
-    var businessProvider = Provider.of<BusinessProvider>(context,listen: false);
+  closeMonthCheckout(
+      BuildContext context, MonthCheckoutModel monthCheckoutModel) async {
+    var businessProvider =
+        Provider.of<BusinessProvider>(context, listen: false);
     CheckoutController checkoutController = CheckoutController();
-    var data = await  checkoutController.closeMonthlyCheckout(context, monthCheckoutModel);
+    var data = await checkoutController.closeMonthlyCheckout(
+        context, monthCheckoutModel);
     data.fold((failure) {
       showFailureModal(context, failure);
     }, (result) {
@@ -92,8 +128,6 @@ class CheckoutProvider extends ChangeNotifier {
       showErroModal(context, "Mbyllja u krye me sukses");
     });
   }
-
-
 
   addNewBusiness(context, BusinessModel businessModel,
       {String? username, String? email, String? password}) async {
@@ -110,7 +144,7 @@ class CheckoutProvider extends ChangeNotifier {
               child: Container(
                 width: getPhoneWidth(context),
                 padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20)),
@@ -165,7 +199,7 @@ class CheckoutProvider extends ChangeNotifier {
               child: Container(
                 width: getPhoneWidth(context),
                 padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20)),
@@ -211,7 +245,6 @@ class CheckoutProvider extends ChangeNotifier {
       });
     });
   }
-
 
   filter(String emriBiznesit, int type) {
     _checkoutList = [];

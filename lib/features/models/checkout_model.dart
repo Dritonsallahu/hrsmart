@@ -1,4 +1,4 @@
-import 'package:hr_smart/features/models/user_model.dart';
+import 'package:business_menagament/features/models/user_model.dart';
 
 class CheckoutModel {
   dynamic id;
@@ -11,6 +11,8 @@ class CheckoutModel {
   dynamic? closedPrice;
   bool? active;
   bool? closed;
+  String? updatedAt;
+  String? createdAt;
 
   CheckoutModel({
     this.id,
@@ -23,6 +25,8 @@ class CheckoutModel {
     this.closedPrice,
     this.active,
     this.closed,
+    this.updatedAt,
+    this.createdAt,
   });
 
   factory CheckoutModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,8 @@ class CheckoutModel {
       closedPrice: json['closed_price'],
       active: json['active'],
       closed: json['closed'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 

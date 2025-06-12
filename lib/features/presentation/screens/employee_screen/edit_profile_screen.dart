@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/consts/dimensions.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/features/controllers/business_admin_controllers/business_admin_controller.dart';
-import 'package:hr_smart/features/controllers/employee_controllers/employe_profile_controller.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
-import 'package:hr_smart/features/presentation/providers/employee_provider.dart';
-import 'package:hr_smart/features/presentation/widgets/error_widgets.dart';
-import 'package:hr_smart/features/presentation/widgets/failures.dart';
+import 'package:business_menagament/core/consts/dimensions.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/controllers/employee_controllers/employe_profile_controller.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
+import 'package:business_menagament/features/presentation/widgets/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -44,11 +44,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     var data = {};
     data['id'] = currentUser.user!.id;
-    data['username'] = _username.text;
-    data['email'] = _email.text;
-    data['password'] = _password.text;
-    // showErroModal(context,
-    //     "Perditesimi nuk mund te behet!\n Ju lutem prisni deri ne njoftimin e radhes.");
+    if(_username.text.isNotEmpty){
+      data['username'] = _username.text;
+    }
+    if(_email.text.isNotEmpty){
+      data['email'] = _email.text;
+    }
+    if(_password.text.isNotEmpty){
+      data['password'] = _password.text;
+    }
     EmployeeProfileController employeeProfileController =
     EmployeeProfileController();
     var result = await employeeProfileController.updateProfile(context, data);

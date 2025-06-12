@@ -3,9 +3,9 @@
 //
 // import 'dart:convert';
 //
-// import 'package:hr_smart/Api/api.dart';
+// import 'package:business_menagament/Api/api.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:hr_smart/model/user.dart';
+// import 'package:business_menagament/model/user.dart';
 // import 'package:flutter/cupertino.dart';
 //
 // class RememberUserPrefs{

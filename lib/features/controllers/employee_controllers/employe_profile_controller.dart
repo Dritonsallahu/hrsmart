@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/api_urls.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/core/storage/local_storage.dart';
-import 'package:hr_smart/features/models/employee_model.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/employee_provider.dart';
+import 'package:business_menagament/core/api_urls.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/features/models/employee_model.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';

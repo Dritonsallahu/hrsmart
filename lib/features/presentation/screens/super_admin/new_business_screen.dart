@@ -1,8 +1,7 @@
-import 'package:hr_smart/features/controllers/super_admin_controllers/super_admin_controller.dart';
-import 'package:hr_smart/controller/signup.dart';
-import 'package:hr_smart/features/models/business_model.dart';
-import 'package:hr_smart/features/presentation/providers/business_provider.dart';
-import 'package:hr_smart/features/presentation/widgets/form_widget.dart';
+import 'package:business_menagament/features/controllers/super_admin_controllers/super_admin_controller.dart';
+import 'package:business_menagament/features/models/business_model.dart';
+import 'package:business_menagament/features/presentation/providers/business_provider.dart';
+import 'package:business_menagament/features/presentation/widgets/form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -23,8 +22,8 @@ class _NewBusinessScreenState extends State<NewBusinessScreen>
   TextEditingController businessName = TextEditingController();
   TextEditingController registeredDate = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
-  TextEditingController city = TextEditingController();
-  TextEditingController country = TextEditingController();
+  TextEditingController city = TextEditingController(text: "Ferizaj");
+  TextEditingController country = TextEditingController(text: "Kosove");
   TextEditingController businessNumber = TextEditingController();
   TextEditingController comment = TextEditingController();
   TextEditingController status = TextEditingController();
@@ -46,8 +45,6 @@ class _NewBusinessScreenState extends State<NewBusinessScreen>
   var datapag = TextEditingController(text: 'pronari-no-need-data');
   var category = TextEditingController(text: 'menaxher');
   SuperAdminController businessController = SuperAdminController();
-
-  Signup signup = Signup(); //regjistro pronarin
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +256,7 @@ class _NewBusinessScreenState extends State<NewBusinessScreen>
                                             const Color.fromRGBO(50, 74, 89, 1),
                                         width: 1.6)),
                                 padding: const EdgeInsets.all(2),
-                                child: isTesting
+                                child: !isTesting
                                     ? const SizedBox()
                                     : Container(
                                         width: 25,
@@ -283,7 +280,7 @@ class _NewBusinessScreenState extends State<NewBusinessScreen>
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            isTesting = true;
+                            isTesting = false;
                           });
                         },
                         child: Container(
@@ -300,7 +297,7 @@ class _NewBusinessScreenState extends State<NewBusinessScreen>
                                             const Color.fromRGBO(50, 74, 89, 1),
                                         width: 1.6)),
                                 padding: const EdgeInsets.all(2),
-                                child: !isTesting
+                                child:  isTesting
                                     ? const SizedBox()
                                     : Container(
                                         width: 25,

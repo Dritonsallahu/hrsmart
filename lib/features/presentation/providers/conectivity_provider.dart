@@ -16,7 +16,7 @@ class ConnectivityProvider extends ChangeNotifier {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      // result = await _connectivity.checkConnectivity();
+      result = await _connectivity.checkConnectivity();
     } on PlatformException catch (e) {
       return;
     }
@@ -25,7 +25,7 @@ class ConnectivityProvider extends ChangeNotifier {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
 
-    // return _updateConnectionStatus(result);
+    return _updateConnectionStatus(result);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {

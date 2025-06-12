@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:hr_smart/core/api_urls.dart';
-import 'package:hr_smart/core/errors/failure.dart';
-import 'package:hr_smart/core/storage/local_storage.dart';
-import 'package:hr_smart/features/models/transaction_model.dart';
-import 'package:hr_smart/features/presentation/providers/checkout_provider.dart';
-import 'package:hr_smart/features/presentation/providers/current_user.dart';
+import 'package:business_menagament/core/api_urls.dart';
+import 'package:business_menagament/core/errors/failure.dart';
+import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/features/models/transaction_model.dart';
+import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/current_user.dart';
 import 'package:dartz/dartz.dart';
 
 import 'package:http/http.dart' as http;
@@ -43,7 +43,7 @@ class BusinessCostController {
     headers['Authorization'] = "Bearer $token";
     var map = {
       'business': userProvider.getUser()!.businessModel!.id,
-      'checkout': checkoutProvider.getActiveCheckout()!.id,
+      'checkout': checkoutProvider.getCheckoutModel()!.id,
     };
     var response = await http.post(Uri.parse(EXPENSES_URL),
         body: jsonEncode(map), headers: headers);
