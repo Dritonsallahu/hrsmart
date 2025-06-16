@@ -37,8 +37,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool updating = false;
 
   editEmployee(context) async {
+    var employeeProvider = Provider.of<EmployeeProvider>(context,listen: false);
     setState(() => updating = true);
-    var currentUser = Provider.of<EmployeeProvider>(context, listen: false).getUser()!;
+    var currentUser = Provider.of<EmployeeProvider>(context, listen: false).getEmployee()!;
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
 
@@ -59,9 +60,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     result.fold((failure) {
       setState(() => updating = false);
       showFailureModal(context, failure);
-    }, (r) {
+    }, (employeeModel) {
       setState(() => updating = false);
          Navigator.pop(context);
+      employeeProvider.addNewUser(employeeModel);
       showErroModal(context, "Te dhenat u perdiesuan me sukses");
 
     });
@@ -73,14 +75,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var currentUser = Provider.of<EmployeeProvider>(context, listen: false);
       setState(() {
-        _fullName.text = currentUser.getUser()!.user!.fullName!;
-        _username.text = currentUser.getUser()!.user!.username!;
-        _email.text = currentUser.getUser()!.user!.email!;
-        _salary.text = "${currentUser.getUser()!.salary!}€";
+        _fullName.text = currentUser.getEmployee()!.user!.fullName!;
+        _username.text = currentUser.getEmployee()!.user!.username!;
+        _email.text = currentUser.getEmployee()!.user!.email!;
+        _salary.text = "${currentUser.getEmployee()!.salary!}€";
         _allowedDebt.text =
-            "${currentUser.getUser()!.allowedDebt!}€";
-        _startedDate.text = currentUser.getUser()!.startedDate!.toString();
-        if (currentUser.getUser()!.type == "Manager") {
+            "${currentUser.getEmployee()!.allowedDebt!}€";
+        _startedDate.text = currentUser.getEmployee()!.startedDate!.toString();
+        if (currentUser.getEmployee()!.type == "Manager") {
           isManager = true;
         } else {
           isManager = false;
@@ -94,12 +96,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     var currentUser = Provider.of<EmployeeProvider>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       key: scaffoldKe,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          "${currentUser.getUser()!.user!.fullName}",
+          "${currentUser.getEmployee()!.user!.fullName}",
           style: GoogleFonts.poppins(fontSize: 17),
         ),
         centerTitle: true,
@@ -199,6 +202,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return null;
                       },
                       readOnly: true,
+                      style: TextStyle(color: Colors.grey),
                       controller: _fullName,
                       decoration: const InputDecoration(
                           fillColor: Color.fromRGBO(247, 248, 251, 1),
@@ -278,7 +282,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Fjalekalimi",
+                  "Fjalekalimi i ri",
                   style: GoogleFonts.nunito(
                       fontWeight: FontWeight.w500, fontSize: 14),
                 ),
@@ -326,7 +330,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return null;
                       },
                       readOnly: true,
-                      controller: _salary,
+                      controller: _salary,    style: TextStyle(color: Colors.grey),
                       decoration: const InputDecoration(
                           fillColor: Color.fromRGBO(247, 248, 251, 1),
                           filled: true,
@@ -358,7 +362,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return null;
                       },
                       readOnly: true,
-                      controller: _allowedDebt,
+                      controller: _allowedDebt,    style: TextStyle(color: Colors.grey),
                       decoration: const InputDecoration(
                           fillColor: Color.fromRGBO(247, 248, 251, 1),
                           filled: true,
@@ -388,19 +392,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           return "Plotesoni daten";
                         }
                         return null;
-                      },
+                      },   style: TextStyle(color: Colors.grey),
                       controller:
                           _startedDate, //editing controller of this TextField
                       decoration: const InputDecoration(
                           border:
                               OutlineInputBorder(borderSide: BorderSide.none),
                           prefixIcon: Icon(Icons.calendar_today),
-                          suffixIcon:
-                              Icon(Icons.arrow_drop_down), //icon of text field
 
                           hintText: "00/00/0000",
                           filled: true,
-                          fillColor: Color.fromRGBO(235, 235, 235, 1),
+                          fillColor: Color.fromRGBO(247, 248, 251, 1),
                           hintStyle: TextStyle(
                               color: Color.fromRGBO(0, 24, 51, 0.22),
                               fontSize: 16,
@@ -419,9 +421,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: MediaQuery.of(context).size.width - 40,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (!updating) {
+                    // if (updating) return;
                       editEmployee(context);
-                    }
                   },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(

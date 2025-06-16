@@ -35,8 +35,8 @@ class _CheckoutUpdateScreenState extends State<CheckoutUpdateScreen> {
         Provider.of<CheckoutProvider>(context, listen: false);
 
     CheckoutModel checkoutModel = CheckoutModel(
-      business: userProvider.getUser()!.businessModel,
-      userModel: userProvider.getUser()!,
+      business: userProvider.getBusinessAdmin()!.business,
+      userModel: userProvider.getBusinessAdmin()!.user,
       active: true,
       startedDate: DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
           .format(DateTime.now().toUtc()),

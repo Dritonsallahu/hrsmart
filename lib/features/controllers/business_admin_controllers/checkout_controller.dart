@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/checkout_model.dart';
 import 'package:business_menagament/features/models/month_checkout_model.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
@@ -20,7 +20,7 @@ class CheckoutController {
       context, CheckoutModel checkoutModel) async {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var map = checkoutModel.toJson();
 
@@ -61,7 +61,7 @@ class CheckoutController {
       context, checkoutId, double price) async {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var closingDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .format(DateTime.now().toUtc());
@@ -107,13 +107,13 @@ class CheckoutController {
   Future<Either<Failure, CheckoutModel>> getCheckout(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
     var checkoutProvider = Provider.of<CheckoutProvider>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
 
     try{
       var response = await http.post(Uri.parse(CHECKOUT_URL),
           body: jsonEncode({
-            "business": userProvider.getUser()!.businessModel!.id,
+            "business": userProvider.getBusinessAdmin()!.business!.id,
           }),
           headers: headers);
       if (response.statusCode == 201) {
@@ -145,13 +145,15 @@ class CheckoutController {
 
   Future<Either<Failure, List<CheckoutModel>>> getCheckouts(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var business = userProvider.getUser()!.businessModel!.id;
-    var token = await PersistentStorage().getToken();
+    var business = userProvider.getBusinessAdmin()!.business!.id;
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
-
+    print("headers: ${headers}");
     try{
       var response = await http.get(Uri.parse("$CHECKOUTS_URL/$business"),
           headers: headers);
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
         if (response.body.contains("errors")) {
           return Left(WrongFailure());
@@ -182,7 +184,7 @@ class CheckoutController {
       context, MonthCheckoutModel monthCheckoutModel) async {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
 
     try{
@@ -218,7 +220,7 @@ class CheckoutController {
       context, id, year,
       {int? month}) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var editedUrl = "$EMPLOYEE_EXPENSES_URL/$id?year=$year";
     if (month != null) {

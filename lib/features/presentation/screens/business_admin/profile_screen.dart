@@ -1,5 +1,5 @@
 import 'package:business_menagament/core/consts/dimensions.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/controllers/business_admin_controllers/business_profile_controller.dart';
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
 import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
@@ -28,9 +28,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var userProvider = Provider.of<CurrentUser>(context, listen: false);
-      fullName.text = userProvider.getUser()!.fullName!;
-      username.text = userProvider.getUser()!.username!;
-      email.text = userProvider.getUser()!.email!;
+      fullName.text = userProvider.getBusinessAdmin()!.user!.fullName!;
+      username.text = userProvider.getBusinessAdmin()!.user!.username!;
+      email.text = userProvider.getBusinessAdmin()!.user!.email!;
     });
     super.initState();
   }
@@ -38,11 +38,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   editBusinessProfile(context) async {
     setState(() => updating = true);
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
-    PersistentStorage persistentStorage = PersistentStorage();
-    var user = currentUser.getUser();
+    BusinessAdminStorage persistentStorage = BusinessAdminStorage();
+    var userAdmin = currentUser.getBusinessAdmin();
 
     var data = {};
-    data['id'] = currentUser.getUser()!.id;
+    data['id'] = currentUser.getBusinessAdmin()!.id;
     if (username.text.isNotEmpty) data['username'] = username.text;
     if (email.text.isNotEmpty) data['email'] = email.text;
     if (password.text.isNotEmpty) data['password'] = password.text;
@@ -53,9 +53,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => updating = false);
       showFailureModal(context, failure);
     }, (r) {
-      if (username.text.isNotEmpty) user!.username = username.text;
-      if (email.text.isNotEmpty) user!.email = email.text;
-      persistentStorage.addNewUser(user!);
+      if (username.text.isNotEmpty) userAdmin!.user!.username = username.text;
+      if (email.text.isNotEmpty) userAdmin!.user!.email = email.text;
+      persistentStorage.addNewAdminUser(userAdmin!);
       setState(() => updating = false);
       showErroModal(context, "Te dhenat u perdiesuan me sukses");
     });

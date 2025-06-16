@@ -1,7 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:business_menagament/core/api_urls.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/employee_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
+import 'package:business_menagament/core/storage/role_storage.dart';
+import 'package:business_menagament/features/models/branch_model.dart';
+import 'package:business_menagament/features/models/business_admin_model.dart';
 import 'package:business_menagament/features/models/business_model.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/models/super_admin_model.dart';
@@ -32,45 +36,50 @@ class LoginController {
         'password': password,
       }),
     );
-    print(response.statusCode);
-    print(response.body);
+
+    RoleStorage roleStorage = RoleStorage();
     if (response.statusCode == 201) {
       var resbody = jsonDecode(response.body);
-
-      var token = resbody['token'];
-      if (resbody['user']['role']['role_name'] == 'superadmin') {
+      var user = resbody['user'];
+      print(user['admin']['user']);
+      var token = resbody['token']['access_token'];
+      if (user['admin']['user']['role']['role_name'] == 'superadmin') {
         var userProvider = Provider.of<CurrentUser>(context, listen: false);
         SuperAdminModel user = SuperAdminModel.fromJson(resbody['user']);
-        PersistentStorage persistentStorage = PersistentStorage();
-        await persistentStorage.addNewUser(user);
+        roleStorage.addNewRole("superAdmin");
+        BusinessAdminStorage persistentStorage = BusinessAdminStorage();
+        // await persistentStorage.addNewAdminUser(user);
         await persistentStorage.addToken(token);
-        userProvider.addNewUser(user);
+        // userProvider.addNewBusinessAdmin(user);
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const AdminHome()));
-      } else if (resbody['user']['role']['role_name'] == 'businessAdmin') {
+      } else if (user['admin']['user']['role']['role_name'] ==
+          'businessAdmin') {
         var userProvider = Provider.of<CurrentUser>(context, listen: false);
-        UserModel user = UserModel.fromJson(resbody['user']);
-        BusinessModel businessModel =
-            BusinessModel.fromJson(resbody['user']['business']);
-        user.businessModel = businessModel;
-
-        PersistentStorage persistentStorage = PersistentStorage();
-        await persistentStorage.addNewUser(user);
+        BusinessAdminModel businessAdminModel =
+            BusinessAdminModel.fromJson(user['admin']);
+        roleStorage.addNewRole("businessAdmin");
+        BusinessAdminStorage persistentStorage = BusinessAdminStorage();
+        await persistentStorage.addNewAdminUser(businessAdminModel);
         await persistentStorage.addToken(token);
-        userProvider.addNewUser(user);
+        userProvider.addNewBusinessAdmin(businessAdminModel);
+
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => const BusinessAdminNavigation()));
-      } else if (resbody['user']['role']['role_name'] == 'manager' || resbody['user']['role']['role_name'] == 'waiter') {
+      } else if (resbody['user']['role']['role_name'] == 'manager' ||
+          resbody['user']['role']['role_name'] == 'waiter' ||
+          resbody['user']['role']['role_name'] == 'employee') {
         var userProvider =
             Provider.of<EmployeeProvider>(context, listen: false);
         UserModel user = UserModel.fromJson(resbody['user']);
         EmployeeModel employeeModel =
             EmployeeModel.fromJson(resbody['user']['employee']);
         employeeModel.user = user;
-        PersistentStorage persistentStorage = PersistentStorage();
-        await persistentStorage.addNewUser(user);
+        EmployeeStorage persistentStorage = EmployeeStorage();
+        roleStorage.addNewRole("employee");
+        await persistentStorage.addNewEmployee(employeeModel);
         await persistentStorage.addToken(token);
         userProvider.addNewUser(employeeModel);
         Navigator.pushReplacement(context,

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
 import 'package:dartz/dartz.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class BusinessProfileController{
   static var headers = {"Content-Type": "application/json"};
   Future<Either<Failure, EmployeeModel>> updateProfile(context, body) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try {
       var response = await http.put(

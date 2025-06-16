@@ -47,7 +47,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
 
     TransactionModel transactionModel = TransactionModel(
-      business: userProvider.getUser()!.businessModel!.id,
+      business: userProvider.getBusinessAdmin()!.business!.id,
       user: widget.transactionModel!.user,
       checkout: widget.transactionModel!.checkout,
       status: "active",

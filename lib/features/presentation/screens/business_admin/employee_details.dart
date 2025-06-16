@@ -94,7 +94,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
     var left = widget.employeeModel.salary - double.parse(closedPrice.text);
     MonthCheckoutModel monthCheckoutModel = MonthCheckoutModel(
       userModel: widget.employeeModel.user!,
-      business: currentUser.getUser()!.businessModel,
+      business: currentUser.getBusinessAdmin()!.business,
       closedPrice: double.parse(closedPrice.text),
       closedDebt: (widget.employeeModel.countTransactions()).toDouble() - left,
       description: description.text,
@@ -1146,7 +1146,7 @@ class _EmployeeDetailsState extends State<EmployeeDetails> {
                                     fontSize: 20, fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                widget.employeeModel.business['name'],
+                                widget.employeeModel.business!.name!,
                                 style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w400),
                               ),

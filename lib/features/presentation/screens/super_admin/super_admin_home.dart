@@ -68,9 +68,9 @@ class _AdminHomeState extends State<AdminHome>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              currentUser.getUser() == null
+              currentUser.getBusinessAdmin() == null
                   ? ""
-                  : currentUser.getUser()!.fullName!,
+                  : currentUser.getBusinessAdmin()?.user?.fullName ?? "",
               style: GoogleFonts.poppins(
                   fontSize: 15, fontWeight: FontWeight.w600),
             ),
@@ -179,9 +179,9 @@ class _AdminHomeState extends State<AdminHome>
                             ],
                           ),
                           Text(
-                              currentUser.getUser() == null
+                              currentUser.getBusinessAdmin() == null
                                   ? ""
-                                  : currentUser.getUser()!.fullName!,
+                                  : currentUser.getBusinessAdmin()?.user?.fullName ?? "",
                               style: const TextStyle(fontSize: 15)),
                           const SizedBox(width: 20),
                         ],
@@ -216,7 +216,7 @@ class _AdminHomeState extends State<AdminHome>
                     )),
                 GestureDetector(
                   onTap: () async {
-                    await currentUser.removeUser(context);
+                    await currentUser.removeBusinessAdmin(context);
                   },
                   child: const ListTile(
                     hoverColor: Colors.black12,

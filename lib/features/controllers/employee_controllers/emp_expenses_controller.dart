@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
 import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
@@ -14,7 +14,7 @@ class EmpExpensesController {
   static var headers = {"Content-Type": "application/json"};
 
   Future<Either<Failure, List<TransactionModel>>> getEmpExpenses(body) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try {
       var response = await http.post(Uri.parse(EMP_EXPENSES_URL),
@@ -44,11 +44,11 @@ class EmpExpensesController {
 
   Future<Either<Failure, EmployeeModel>> getEmployeeDetails(context) async {
     var currentUser = Provider.of<EmployeeProvider>(context,listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try {
       var response =
-          await http.get(Uri.parse("$EMP_DETAILS_URL/${currentUser.getUser()!.id}"), headers: headers);
+          await http.get(Uri.parse("$EMP_DETAILS_URL/${currentUser.getEmployee()!.id}"), headers: headers);
 
 
       if (response.statusCode == 200) {

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
 import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class BusinessCostController {
   static var headers = {"Content-Type": "application/json"};
   Future<Either<Failure, TransactionModel>> addNewExpense(cost) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var response = await http.post(Uri.parse(ADD_EXPENSE_URL),
         body: cost, headers: headers);
@@ -39,10 +39,10 @@ class BusinessCostController {
   Future<Either<Failure, List<TransactionModel>>> getExpenses(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
     var checkoutProvider = Provider.of<CheckoutProvider>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var map = {
-      'business': userProvider.getUser()!.businessModel!.id,
+      'business': userProvider.getBusinessAdmin()!.business!.id,
       'checkout': checkoutProvider.getCheckoutModel()!.id,
     };
     var response = await http.post(Uri.parse(EXPENSES_URL),
@@ -78,7 +78,7 @@ class BusinessCostController {
       context, id, year,
       {int? month}) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var editedUrl = "$EMPLOYEE_EXPENSES_URL/$id?year=$year";
     if (month != null) {

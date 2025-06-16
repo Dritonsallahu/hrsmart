@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/business_model.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
@@ -11,20 +11,18 @@ import 'package:provider/provider.dart';
 
 class BusinessAdminController {
   static var headers = {"Content-Type": "application/json"};
-  Future<Either<Failure, String>> addNewEmployee(employee) async {
-    var token = await PersistentStorage().getToken();
+  Future<Either<Failure, EmployeeModel>> addNewEmployee(employee) async {
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
    try{
      var response = await http.post(Uri.parse(EMPLOYEE_URL),
          body: employee, headers: headers);
+     print(response.statusCode);
+     print(response.body);
      if (response.statusCode == 201) {
        var resBody = jsonDecode(response.body);
-       if (resBody.toString().contains("Conflict")) {
-         return Left(DuplicateDataFailure());
-       } else if (resBody.toString().contains("Success")) {
-         return const Right("Success");
-       }
-       return Left(ServerFailure());
+       EmployeeModel employeeModel = EmployeeModel.fromJson(resBody['employee']);
+       return Right(employeeModel);
      } else {
        if (response.statusCode == 409) {
          return Left(DuplicateDataFailure());
@@ -33,21 +31,23 @@ class BusinessAdminController {
      }
    }
    catch(e){
+     print(e);
      return Left(ServerFailure());
    }
   }
 
   Future<Either<Failure, List<EmployeeModel>>> getEmployees(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var business = userProvider.getUser()!.businessModel!.id;
-    var token = await PersistentStorage().getToken();
+    var business = userProvider.getBusinessAdmin()!.business!.id;
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
 
      try{
        var response = await http.get(
            Uri.parse("$EMPLOYEES_LIST_URL?business=$business"),
            headers: headers).timeout(const Duration(seconds: 15));
-
+        print(response.statusCode);
+        print(response.body);
        var resBody = jsonDecode(response.body);
         if(response.statusCode == 200){
           List<EmployeeModel> employeeModel = resBody
@@ -90,7 +90,7 @@ class BusinessAdminController {
   }
 
   Future<Either<Failure, EmployeeModel>> updateEmployeeProfile(context, body) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try {
       var response = await http.put(
@@ -121,7 +121,7 @@ class BusinessAdminController {
   }
     Future<Either<Failure, EmployeeModel>> deleteEmployee(context, id) async {
 
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try {
       var response = await http.delete(

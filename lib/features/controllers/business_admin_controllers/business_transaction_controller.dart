@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/exception.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/transaction_category_model.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
 import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
@@ -18,8 +18,8 @@ import 'package:provider/provider.dart';
 class BusinessTransactionController {
   static var headers = {"Content-Type": "application/json"};
 
-  Future<Either<Failure, TransactionModel>> addNewTransaction(cost) async {
-    var token = await PersistentStorage().getToken();
+  Future<Either<Failure, TransactionModel>> addExpense(cost) async {
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try{
       var response = await http.post(Uri.parse(ADD_EXPENSE_URL),
@@ -50,7 +50,7 @@ class BusinessTransactionController {
 
   Future<Either<Failure, TransactionModel>> editTransaction(
       String tId, dynamic data) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try{
       var response = await http.put(Uri.parse("$EDIT_EXPENSE_URL/$tId"),
@@ -78,7 +78,7 @@ class BusinessTransactionController {
   }
 
   Future<Either<Failure, String>> deleteTransaction(tId) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     try{
       var response = await http.delete(Uri.parse("$DELETE_EXPENSE_URL/$tId"),
@@ -108,22 +108,23 @@ class BusinessTransactionController {
     }
   }
 
-  Future<Either<Failure, List<TransactionModel>>> getTransactions(
+  Future<Either<Failure, List<TransactionModel>>>  getTransactions(
       context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
     if (checkoutProvider.getCheckoutModel() != null) {
-      var token = await PersistentStorage().getToken();
+      var token = await BusinessAdminStorage().getToken();
       headers['Authorization'] = "Bearer $token";
       var map = {
-        'business': userProvider.getUser()!.businessModel!.id,
+        'business': userProvider.getBusinessAdmin()!.business!.id,
         "checkout": checkoutProvider.getCheckoutModel()!.id
       };
       try{
         var response = await http.post(Uri.parse(EXPENSES_URL),
             body: jsonEncode(map), headers: headers);
-
+        print(response.statusCode);
+        print(response.body);
         if (response.statusCode == 201) {
           if (response.body.contains("errors")) {
             return Left(WrongFailure());
@@ -161,9 +162,9 @@ class BusinessTransactionController {
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
 
-      var token = await PersistentStorage().getToken();print("sdf");
+      var token = await BusinessAdminStorage().getToken();print("sdf");
       headers['Authorization'] = "Bearer $token";
-      var data = {"business": userProvider.getUser()!.businessModel!.id};
+      var data = {"business": userProvider.getBusinessAdmin()!.business!.id};
       if (withDate) {
         data['from'] = DateFormat('yyyy-MM-dd ').format(from!);
         data['to'] = DateFormat('yyyy-MM-dd ').format(to!);
@@ -204,9 +205,9 @@ class BusinessTransactionController {
   Future<Either<Failure, List<TransactionModel>>> getTransactionsByCheckout(
       context, String id) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
-    var map = {'business': userProvider.getUser()!.businessModel!.id};
+    var map = {'business': userProvider.getBusinessAdmin()!.business!.id};
     try{
       var response = await http.post(Uri.parse("$EXPENSES_BY_CHECKOUT_URL/$id"),
           body: jsonEncode(map), headers: headers);
@@ -239,7 +240,7 @@ class BusinessTransactionController {
   Future<Either<Failure, List<TransactionModel>>> getEmployeeTransactions(
       context, id, year,
       {int? month}) async {
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var editedUrl = "$EMPLOYEE_EXPENSES_URL/$id?year=$year";
     if (month != null) {
@@ -275,9 +276,9 @@ class BusinessTransactionController {
   Future<Either<Failure, List<TransactionCategoryModel>>>
   getTransactionCategories(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
-    var editedUrl = "$TRANSACTION_CATEGORY_URL/${userProvider.getUser()!.businessModel!.id}";
+    var editedUrl = "$TRANSACTION_CATEGORY_URL/${userProvider.getBusinessAdmin()!.business!.id}";
 
     try{
       var response =
@@ -317,11 +318,11 @@ class BusinessTransactionController {
   Future<Either<Failure, TransactionCategoryModel>>
       addTransactionCategory(context, categoryName) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var editedUrl = TRANSACTION_CATEGORY_URL;
     var map = {
-      "business": userProvider.getUser()!.businessModel!.id,
+      "business": userProvider.getBusinessAdmin()!.business!.id,
       "category_name": categoryName
     };
     try{
@@ -360,7 +361,7 @@ class BusinessTransactionController {
   Future<Either<Failure, TransactionCategoryModel>>
   deleteTransactionCategory(context, id) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var editedUrl = "$TRANSACTION_CATEGORY_URL/$id";
     try{
@@ -398,12 +399,12 @@ class BusinessTransactionController {
   Future<Either<Failure, dynamic>> filter(context, DateTime from, DateTime to,
       {int? month}) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
     var map = {
       "from": DateFormat('yyyy-MM-dd ').format(from),
       "to": DateFormat('yyyy-MM-dd ').format(to),
-      'business': userProvider.getUser()!.businessModel!.id
+      'business': userProvider.getBusinessAdmin()!.business!.id
     };
     try{
       var response = await http.post(Uri.parse(FILTER_URL),

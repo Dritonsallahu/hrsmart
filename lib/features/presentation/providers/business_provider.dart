@@ -8,6 +8,7 @@ import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/models/month_checkout_model.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
 import 'package:business_menagament/features/presentation/providers/checkout_provider.dart';
+import 'package:business_menagament/features/presentation/providers/employee_provider.dart';
 import 'package:business_menagament/features/presentation/providers/navigator_provider.dart';
 import 'package:business_menagament/features/presentation/widgets/error_widgets.dart';
 import 'package:business_menagament/features/presentation/widgets/failures.dart';
@@ -181,27 +182,30 @@ class BusinessProvider extends ChangeNotifier {
         });
       }
     }
-
     return count;
   }
 
   addNewEmployee(context, employee) async {
+    var employees = Provider.of<EmployeeProvider>(context, listen: false);
     BusinessAdminController businessAdminController =
     BusinessAdminController();
     var result = await businessAdminController.addNewEmployee(employee);
     return result.fold((failure) {
       showFailureModal(context, failure);
+      return false;
     }, (result) {
+      employees.addNewUser(result);
       getAllEmployees(context);
       showErroModal(context, "Punetori u shtua me sukses");
-      return result;
+      Navigator.pop(context);
+      return true;
     });
   }
 
   addNewExpense(context, encodedData) async {
     BusinessTransactionController businessCostController =
         BusinessTransactionController();
-    var result = await businessCostController.addNewTransaction(encodedData);
+    var result = await businessCostController.addExpense(encodedData);
     result.fold((failure) {
       showFailureModal(context, failure);
     }, (TransactionModel transactionModel) {

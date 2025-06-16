@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
-// const host = "http://192.168.1.5:3000/api/v1";
-const host = 'https://hrsmartmanagement.onrender.com/api/v1';
+const host = "http://192.168.1.26:3000/api/v1";
+// const host = 'https://hrsmartmanagement.onrender.com/api/v1';
 
 // Auth
 const LOGIN_URL = "$host/login";

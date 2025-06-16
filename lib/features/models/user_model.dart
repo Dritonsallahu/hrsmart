@@ -9,8 +9,6 @@ class UserModel {
   String? email;
   dynamic role;
   String? statusi;
-  dynamic employeeModel;
-  BusinessModel? businessModel;
   String? createdAt;
   String? updatedAt;
 
@@ -21,8 +19,6 @@ class UserModel {
       this.email,
       this.role,
       this.statusi,
-      this.businessModel,
-      this.employeeModel,
       this.createdAt,
       this.updatedAt,
       });
@@ -35,8 +31,6 @@ class UserModel {
       email: json['email'],
       role: json['role'],
       statusi: json['statusi'],
-      businessModel: json['business'] == null ? null: BusinessModel.fromJson(json['business']),
-      employeeModel: json['employee'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
     );
@@ -49,8 +43,6 @@ class UserModel {
         "email": email, 
         "role": role,
         "statusi": statusi,
-        "business": businessModel,
-        "employee": employeeModel,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
       };

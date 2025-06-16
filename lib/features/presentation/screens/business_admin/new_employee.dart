@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:business_menagament/core/consts/dimensions.dart';
 import 'package:business_menagament/core/errors/failure.dart';
 import 'package:business_menagament/features/controllers/business_admin_controllers/business_admin_controller.dart';
+import 'package:business_menagament/features/models/branch_model.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/presentation/providers/business_provider.dart';
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 
 class NewEmployee extends StatefulWidget {
   final bool? newPage;
@@ -21,12 +23,15 @@ class NewEmployee extends StatefulWidget {
 
 class _NewEmployeeState extends State<NewEmployee> {
   final TextEditingController _fullName = TextEditingController();
+  final TextEditingController _branchName = TextEditingController();
   final TextEditingController _username = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _salary = TextEditingController();
   final TextEditingController _allowedDebt = TextEditingController();
   final GlobalKey<ScaffoldState> scaffoldKe = GlobalKey<ScaffoldState>();
+
+  BranchModel? branchModel;
 
   final TextEditingController _startedDate = TextEditingController();
   bool isManager = false;
@@ -35,10 +40,11 @@ class _NewEmployeeState extends State<NewEmployee> {
 
   addNewEmployee(context) async {
     setState(() => registering = true);
-    var user = Provider.of<CurrentUser>(context, listen: false).getUser()!;
+    var user = Provider.of<CurrentUser>(context, listen: false).getBusinessAdmin()!;
     EmployeeModel employeeModel = EmployeeModel(
-        business: user.businessModel!.id,
+        business: user.business,
         allowedDebt: _allowedDebt.text,
+        branchModel: branchModel,
         salary: _salary.text,
         withinSalary: withSalary,
         type: isManager ? "manager" : "waiter",
@@ -56,7 +62,7 @@ class _NewEmployeeState extends State<NewEmployee> {
       context,
       jsonEncode(data),
     );
-    if (result == "success") {
+    if (result == true) {
       setState(() {
         _fullName.text = "";
         _username.text = "";
@@ -71,6 +77,7 @@ class _NewEmployeeState extends State<NewEmployee> {
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<CurrentUser>(context);
     return Scaffold(
       key: scaffoldKe,
       appBar: !widget.newPage!
@@ -84,7 +91,8 @@ class _NewEmployeeState extends State<NewEmployee> {
               ),
               centerTitle: true,
             ),
-      body: Padding(
+      body: Container(
+        color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ListView(
           physics: const ClampingScrollPhysics(),
@@ -172,6 +180,35 @@ class _NewEmployeeState extends State<NewEmployee> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            PullDownButton(
+              itemBuilder: (context) =>
+                  (userProvider.getBusinessAdmin()?.business?.branches ?? [])
+                      .map((branch) =>
+                          PullDownMenuItem(onTap: () {
+                            branchModel = branch;
+                            _branchName.text = branchModel?.name ?? "";
+                            setState(() {});
+                          }, title: branch.name!))
+                      .toList(),
+              buttonBuilder: (context, showMenu) => SizedBox(
+                width: MediaQuery.of(context).size.width - 40,
+                height: 49,
+                child: TextFormField(
+                    enabled: true,
+                    readOnly: true,
+                    onTap: showMenu,
+                    controller: _branchName,
+                    decoration:   InputDecoration(
+                        fillColor: Color.fromRGBO(247, 248, 251, 1),
+                        filled: true,
+                        hintText: branchModel == null ? "Zgjidh filialin":branchModel?.name ?? "",
+                        border: OutlineInputBorder(borderSide: BorderSide.none),
+                        suffixIcon: Icon(Icons.keyboard_arrow_down))),
+              ),
             ),
             const SizedBox(
               height: 10,
@@ -459,9 +496,9 @@ class _NewEmployeeState extends State<NewEmployee> {
               width: MediaQuery.of(context).size.width - 40,
               child: GestureDetector(
                   onTap: () {
-                    if (!registering) {
+                    // if (registering) return;
                       addNewEmployee(context);
-                    }
+
                   },
                   child: Container(
                       decoration: BoxDecoration(

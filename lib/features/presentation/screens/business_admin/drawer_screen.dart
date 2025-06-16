@@ -64,16 +64,16 @@ class _BusinessDrawerWidgetState extends State<BusinessDrawerWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.currentUser!.getUser() == null
+                            widget.currentUser!.getBusinessAdmin() == null
                                 ? ""
-                                : widget.currentUser!.getUser()!.fullName!,
+                                : widget.currentUser!.getBusinessAdmin()?.business?.name ?? "",
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 19),
                           ),
                           Text(
-                            widget.currentUser!.getUser() == null
+                            widget.currentUser!.getBusinessAdmin() == null
                                 ? ""
-                                : widget.currentUser!.getUser()!.email!,
+                                : widget.currentUser?.getBusinessAdmin()?.user?.fullName ?? "",
                             style: const TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w400),
                           ),
@@ -453,7 +453,7 @@ class _BusinessDrawerWidgetState extends State<BusinessDrawerWidget> {
                       )),
                   GestureDetector(
                       onTap: () async {
-                        await widget.currentUser!.removeUser(context);
+                        await widget.currentUser!.removeBusinessAdmin(context);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),

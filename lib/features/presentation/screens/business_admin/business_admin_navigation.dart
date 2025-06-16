@@ -7,7 +7,7 @@ import 'package:business_menagament/features/presentation/providers/conectivity_
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
 import 'package:business_menagament/features/presentation/providers/navigator_provider.dart';
 import 'package:business_menagament/features/presentation/providers/notification_provider.dart';
-import 'package:business_menagament/features/presentation/screens/business_admin/add_new_transaction_screen.dart';
+import 'package:business_menagament/features/presentation/screens/business_admin/add_outcome_screen.dart';
 import 'package:business_menagament/features/presentation/screens/business_admin/checkout_screen.dart';
 import 'package:business_menagament/features/presentation/screens/business_admin/drawer_screen.dart';
 import 'package:business_menagament/features/presentation/screens/business_admin/employees_cardlist_screen.dart';
@@ -98,16 +98,16 @@ class _BusinessAdminNavigationState extends State<BusinessAdminNavigation> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                currentUser.getUser() == null
+                currentUser.getBusinessAdmin() == null
                     ? ""
-                    : currentUser.getUser()!.businessModel!.name!,
+                    : currentUser.getBusinessAdmin()?.business?.name ?? "",
                 style: GoogleFonts.poppins(
                     fontSize: 17, fontWeight: FontWeight.w600),
               ),
               Text(
-                currentUser.getUser() == null
+                currentUser.getBusinessAdmin() == null
                     ? ""
-                    : currentUser.getUser()!.fullName!,
+                    : currentUser.getBusinessAdmin()?.user?.fullName ?? "",
                 style: GoogleFonts.poppins(fontSize: 12),
               ),
             ],
@@ -202,7 +202,7 @@ class _BusinessAdminNavigationState extends State<BusinessAdminNavigation> {
               children: const [
                 HomeScreen(),
                 EmployeesCardListScreen(),
-                AddNewCostScreen(),
+                AddOutcomeScreen(),
                 ReportsScreen(),
                 CheckoutScreen(),
               ],

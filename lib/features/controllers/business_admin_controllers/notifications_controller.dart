@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:business_menagament/core/api_urls.dart';
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/models/checkout_model.dart';
 import 'package:business_menagament/features/models/notification_model.dart';
 import 'package:business_menagament/features/presentation/providers/current_user.dart';
@@ -14,12 +14,12 @@ class NotificationsController {
 
   Future<Either<Failure, List<NotificationModel>>> getNotifications(context) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
 
     var response =
-        await http.get(Uri.parse("$NOTIFICATIONS_URL/${userProvider.getUser()!.id}"), headers: headers);
-    print(userProvider.getUser()!.id);
+        await http.get(Uri.parse("$NOTIFICATIONS_URL/${userProvider.getBusinessAdmin()!.id}"), headers: headers);
+    print(userProvider.getBusinessAdmin()!.id);
     print(response.body);
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -40,7 +40,7 @@ class NotificationsController {
 
   Future<Either<Failure, NotificationModel>> readNotification(context,nId) async {
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
-    var token = await PersistentStorage().getToken();
+    var token = await BusinessAdminStorage().getToken();
     headers['Authorization'] = "Bearer $token";
 
     var response =

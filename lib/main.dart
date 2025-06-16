@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       var preferences = await SharedPreferences.getInstance();
       setState(() {
-        _locale =   Locale(preferences.getString("langID") ?? "al");
+        _locale =   Locale(preferences.getString("langID") ?? "sq");
       });
     });
     super.initState();

@@ -1,5 +1,6 @@
 import 'package:business_menagament/core/errors/failure.dart';
-import 'package:business_menagament/core/storage/local_storage.dart';
+import 'package:business_menagament/core/storage/employee_storage.dart';
+import 'package:business_menagament/core/storage/business_admin_storage.dart';
 import 'package:business_menagament/features/controllers/employee_controllers/emp_expenses_controller.dart';
 import 'package:business_menagament/features/models/employee_model.dart';
 import 'package:business_menagament/features/models/transaction_model.dart';
@@ -14,10 +15,11 @@ class EmployeeProvider extends ChangeNotifier {
 
   List<TransactionModel> getExpenses() => _transactions;
 
-  EmployeeModel? getUser() => _employeeModel;
+  EmployeeModel? getEmployee() => _employeeModel;
 
   addNewUser(dynamic employeeModel) {
     _employeeModel = employeeModel;
+    EmployeeStorage().addNewEmployee(employeeModel);
     notifyListeners();
   }
 
@@ -60,9 +62,9 @@ class EmployeeProvider extends ChangeNotifier {
 
 
 
-  Future removeUser(context) async {
-    PersistentStorage persistentStorage = PersistentStorage();
-    await persistentStorage.removeUser();
+  Future removeEmployee(context) async {
+    EmployeeStorage persistentStorage = EmployeeStorage();
+    await persistentStorage.removeEmployeeFromStorage();
     await persistentStorage.removeToken();
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const CredentialsScreen()), (route)=> false);

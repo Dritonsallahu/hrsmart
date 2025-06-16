@@ -1,10 +1,12 @@
-
+import 'package:business_menagament/features/models/branch_model.dart';
+import 'package:business_menagament/features/models/business_model.dart';
 import 'package:business_menagament/features/models/user_model.dart';
 
 class EmployeeModel {
   dynamic id;
-  dynamic business;
+  BusinessModel? business;
   UserModel? user;
+  BranchModel? branchModel;
   dynamic salary;
   dynamic type;
   String? image;
@@ -23,6 +25,7 @@ class EmployeeModel {
     this.id,
     this.business,
     this.user,
+    this.branchModel,
     this.salary,
     this.type,
     this.image,
@@ -44,8 +47,9 @@ class EmployeeModel {
     } catch (e) {}
     return EmployeeModel(
       id: json['_id'],
-      business: json['business'],
+      business: BusinessModel.fromJson(json['business']),
       user: userModel,
+      branchModel: BranchModel.fromJson(json['branch']),
       type: json['type'],
       status: json['status'],
       salary: json['salary'],
@@ -63,16 +67,15 @@ class EmployeeModel {
   double countTransactions() {
     var currentDate = DateTime.now();
     double count = 0.0;
-    if(transactions != null){
+    if (transactions != null) {
       for (var element in (transactions as List)) {
         var dbDate = DateTime.parse(element['updatedAt']);
         if (dbDate.month == currentDate.month) {
           count += element['price'];
         }
       }
-
     }
-   return count;
+    return count;
   }
 
   double countAllTransactions() {
@@ -87,14 +90,15 @@ class EmployeeModel {
     return count;
   }
 
-  double? countPastDebt(){
+  double? countPastDebt() {
     double count = 0.0;
     var currentDate = DateTime.now();
-    if(closedMonths != null){
-      for (var element in (closedMonths )) {
+    if (closedMonths != null) {
+      for (var element in (closedMonths)) {
         var dbDate = DateTime.parse(element['updatedAt']);
 
-        if (dbDate.month < currentDate.month && dbDate.year <= currentDate.year) {
+        if (dbDate.month < currentDate.month &&
+            dbDate.year <= currentDate.year) {
           count += element['closed_debt'];
         }
       }
@@ -106,7 +110,8 @@ class EmployeeModel {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "type": type,
-        "business": business,
+        "business": business!.id,
+        'branch': branchModel!.id,
         "salary": salary,
         "within_salary": withinSalary,
         "image": image,

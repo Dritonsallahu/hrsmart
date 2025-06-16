@@ -40,7 +40,7 @@ class _EditEmployeeScreenState extends State<EditEmployeeScreen> {
 
     EmployeeModel employeeModel = EmployeeModel(
       id: widget.employeeModel!.id,user: widget.employeeModel!.user,
-        business: widget.employeeModel!.business['_id'],
+        business: widget.employeeModel!.business!.id,
         allowedDebt: _allowedDebt.text,
         salary: _salary.text,
         withinSalary: withSalary,

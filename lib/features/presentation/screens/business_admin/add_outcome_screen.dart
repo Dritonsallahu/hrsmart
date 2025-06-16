@@ -19,14 +19,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:business_menagament/l10n/app_localizations.dart';
 
-class AddNewCostScreen extends StatefulWidget {
-  const AddNewCostScreen({Key? key}) : super(key: key);
+class AddOutcomeScreen extends StatefulWidget {
+  const AddOutcomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddNewCostScreen> createState() => _AddNewCostScreenState();
+  State<AddOutcomeScreen> createState() => _AddOutcomeScreenState();
 }
 
-class _AddNewCostScreenState extends State<AddNewCostScreen> {
+class _AddOutcomeScreenState extends State<AddOutcomeScreen> {
   final GlobalKey<ScaffoldState> scaffoldKee = GlobalKey<ScaffoldState>();
   EmployeeModel? employeeModel;
   TransactionCategoryModel? _transactionCategoryModel;
@@ -35,13 +35,13 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
   TextEditingController description = TextEditingController();
 
   bool fetchingEmployees = false;
-  bool addingExpense = false;
+  bool addingOutcome = false;
   bool fetchingCategories = false;
 
   bool punetor = true;
 
-  addNewCost() async {
-    setState(() => addingExpense = true);
+  addOutcome() async {
+    setState(() => addingOutcome = true);
     var userProvider = Provider.of<CurrentUser>(context, listen: false);
     var checkoutProvider =
         Provider.of<CheckoutProvider>(context, listen: false);
@@ -49,7 +49,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
         Provider.of<BusinessProvider>(context, listen: false);
 
     TransactionModel transactionModel = TransactionModel(
-      business: userProvider.getUser()!.businessModel!.id,
+      business: userProvider.getBusinessAdmin()!.business!.id,
       status: "active",
       reason: reason.text,type: punetor == true ? "employee":"product",
       checkout: checkoutProvider.getCheckoutModel()!.id,
@@ -72,7 +72,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
     }
 
 
-    setState(() => addingExpense = false);
+    setState(() => addingOutcome = false);
   }
 
   getTransactionCategories() async {
@@ -102,6 +102,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
         SizedBox(
           height: employeeModel == null ? 20 : 15,
         ),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(
@@ -849,7 +850,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
                     if (debtAmount.text.isEmpty ||
                         _transactionCategoryModel == null) {
                       showFailureModal(context, UnfilledDataFailure());
-                      setState(() => addingExpense = false);
+                      setState(() => addingOutcome = false);
                       return;
                     }
                     //   check if typed price is bigger than checkout total price
@@ -860,13 +861,13 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
                           "${AppLocalizations.of(context)!.exceedCheckoutValueText} ${businessProvider.countBilance(context)}");
                       return;
                     }
-                    addNewCost();
+                    addOutcome();
                   } else {
                     if (debtAmount.text.isEmpty ||
                         reason.text.isEmpty ||
                         employeeModel == null) {
                       showFailureModal(context, UnfilledDataFailure());
-                      setState(() => addingExpense = false);
+                      setState(() => addingOutcome = false);
                       return;
                     }
                     //   check if typed price is bigger than checkout total price
@@ -900,7 +901,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
                           showErroModal(context,
                               AppLocalizations.of(context)!.aboveLimit);
                         } else {
-                          addNewCost();
+                          addOutcome();
                         }
 
                     } else {
@@ -930,7 +931,7 @@ class _AddNewCostScreenState extends State<AddNewCostScreen> {
                           end: Alignment.bottomRight,
                           stops: [0.2, 0.5, 1])),
                   child: Center(
-                    child: addingExpense
+                    child: addingOutcome
                         ? const SizedBox(
                             width: 20,
                             height: 20,
